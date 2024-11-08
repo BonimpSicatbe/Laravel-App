@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Attachment;
-use App\Models\CourseUser;
-use App\Models\PositionUser;
 use App\Models\Requirement;
-use App\Models\SubjectUser;
-use App\Models\TaskAttachment;
 use App\Models\Task;
+use App\Models\TaskAttachment;
 use App\Models\TaskUser;
+use App\Models\TemporaryFile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,10 +22,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::with(['requirement', 'createdBy', 'users'])
-            ->get();
+        $user = Auth::user();
+        $tasks = $user->tasks()->get();
 
-        return view('tasks.index', compact(
+        return view('user.tasks.index', compact(
             'tasks',
         ));
     }
@@ -45,7 +44,7 @@ class TaskController extends Controller
             return back()->with('error', 'Requirement not found.');
         }
 
-        return view('tasks.create', compact(
+        return view('user.tasks.create', compact(
             'requirement',
             'tasks'
         ));
@@ -101,15 +100,29 @@ class TaskController extends Controller
             TaskUser::insert($taskUsers);
         }
 
-        // Step 4: Handle file upload if provided
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('tasks/files', 'public');
-            Attachment::create([
-                'task_id' => $task->id,
-                'file_path' => $filePath,
-                'file_name' => $request->file('file')->getClientOriginalName(),
-            ]);
+        if ($request->uploadTaskAttachment) {
+            $temporaryFile = TemporaryFile::where('folder', $request->uploadTaskAttachment)->first();
+            if ($temporaryFile) {
+                // Move file from temporary storage to the final destination
+                $path = storage_path('app/public/upload_attachments/tmp/' . $request->uploadTaskAttachment . '/' . $temporaryFile->filename);
+                $task->addMedia($path)->toMediaCollection('attachments');
+
+                // Delete temp folder and file after moving
+                Storage::deleteDirectory('public/upload_attachments/tmp/' . $request->uploadTaskAttachment);
+                $temporaryFile->delete();
+            }
         }
+
+        // Step 4: Handle file upload if provided
+//        if ($request->has('uploadTaskAttachment')) {
+//            foreach ($request->uploadTaskAttachment as $filePath) {
+//                Attachment::create([
+//                    'task_id' => $task->id,
+//                    'file_path' => $filePath,
+//                    'file_name' => basename($filePath),
+//                ]);
+//            }
+//        }
 
         return back()->with('success', 'Task created successfully and users assigned!');
     }
@@ -125,12 +138,12 @@ class TaskController extends Controller
             ->where('task_id', $task->id)
             ->get();
 
-        $requirement = $task->requirement;
+        $assigned_users = $task->requirement;
 
-        return view('tasks.show', compact(
+        return view('user.tasks.show', compact(
             'attachments',
             'task',
-            'requirement',
+            'assigned_users',
         ));
     }
 
@@ -139,7 +152,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        return view('tasks.edit', compact(
+        return view('user.tasks.edit', compact(
             'task',
         ));
     }
@@ -228,25 +241,21 @@ class TaskController extends Controller
 
     public function upload(Request $request)
     {
-        // Validate the uploaded files
-        $request->validate([
-            'uploadTaskFile.*' => 'file|mimes:jpg,png,doc,docx,pdf|max:2048', // Update the allowed file types and sizes as needed
-        ]);
+        if ($request->hasFile('uploadTaskAttachment')) {
+            $file = $request->file('uploadTaskAttachment');
+            $filename = $file->getClientOriginalName();
+            $folder = uniqid() . '_' . now()->timestamp;
+            $file->storeAs('tasks_attachments/tmp/' . $folder, $filename);
 
-        $folders = []; // To store paths of uploaded files
+            TemporaryFile::create([
+                'folder' => $folder,
+                'filename' => $filename,
+            ]);
 
-        if ($request->hasFile('uploadTaskFile')) {
-            foreach ($request->file('uploadTaskFile') as $file) {
-                $filename = $file->getClientOriginalName();
-                $folder = uniqid() . '_' . now()->timestamp;
-                // Store each file in a designated folder
-                $file->storeAs('uploadTaskFile/' . $folder, $filename);
-                $folders[] = $folder; // Store the folder name
-            }
-
-            return response()->json(['folders' => $folders], 200); // Return the folder names as JSON
+            // Return a JSON response with the folder name
+            return response()->json(['folder' => $folder]);
         }
 
-        return response()->json(['message' => 'No files uploaded'], 400);
+        return response()->json(['folder' => ''], 400);
     }
 }

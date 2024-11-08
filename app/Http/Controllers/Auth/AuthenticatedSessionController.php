@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
@@ -29,7 +30,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard.index', absolute: false));
+        $user = Auth::user();
+
+        if ($user->hasRole('super-admin|admin')) {
+            Log::info('Redirecting super-admin to admin dashboard');
+            return redirect(route('admin.dashboard.index'));
+        } else {
+            Log::info('Redirecting regular user to user dashboard');
+            return redirect(route('user.dashboard.index'));
+        }
     }
 
     /**

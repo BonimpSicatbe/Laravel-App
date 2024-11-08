@@ -15,7 +15,7 @@
             <x-input-label for="account_number" :value="__('Account Number')"/>
             <x-text-input id="account_number" class="block mt-1 w-full" type="text" name="account_number"
                           :value="old('account_number')" required autofocus autocomplete="name"/>
-            <x-input-error :messages="$errors->get('name')" class="mt-2"/>
+            <x-input-error :messages="$errors->get('account_number')" class="mt-2"/>
         </div>
 
         <!-- Email Address -->
@@ -26,30 +26,34 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2"/>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        {{--        <div class="grid grid-cols-2 gap-4">--}}
 
-            <!-- Role -->
-            <div class="mt-4">
-                <x-input-label for="role" :value="__('Role')"/>
-                <x-select-input id="role" class="block mt-1 w-full" name="role">
-                    <option value="admin">Admin</option>
-                    <option value="user">User</option>
-                    <option value="coordinator">Coordinator</option>
-                </x-select-input>
-                <x-input-error :messages="$errors->get('email')" class="mt-2"/>
-            </div>
-
-            <!-- Position -->
-            <div class="mt-4">
-                <x-input-label for="position" :value="__('Position')"/>
-                <x-select-input id="position" class="block mt-1 w-full" name="position">
-                    @foreach($positions as $position)
-                        <option value="{{ $position->id }}">{{ $position->name }}</option>
-                    @endforeach
-                </x-select-input>
-                <x-input-error :messages="$errors->get('email')" class="mt-2"/>
-            </div>
+        <!-- Role -->
+        {{--
+        <div class="mt-4">
+            <x-input-label for="role" :value="__('Role')"/>
+            <x-select-input id="role" class="block mt-1 w-full" name="role">
+                <option value="admin">Admin</option>
+                <option value="user">User</option>
+                <option value="coordinator">Coordinator</option>
+            </x-select-input>
+            <x-input-error :messages="$errors->get('email')" class="mt-2"/>
         </div>
+        --}}
+
+        <!-- Position -->
+
+        <!-- Position -->
+        <div class="mt-4">
+            <x-input-label for="position" :value="__('Position')"/>
+            <x-select-input id="position" class="block mt-1 w-full" name="position">
+                @foreach($positions as $position)
+                    <option value="{{ $position->id }}">{{ $position->name }}</option>
+                @endforeach
+            </x-select-input>
+            <x-input-error :messages="$errors->get('position')" class="mt-2"/>
+        </div>
+        {{--        </div>--}}
 
         <div class="grid grid-cols-2 gap-4">
             <!-- Password -->

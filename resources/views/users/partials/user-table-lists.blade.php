@@ -3,29 +3,33 @@
     <tr class="text-gray-400">
         <th>Account Number</th>
         <th>Name</th>
-        <th>Role</th>
         <th>Email</th>
-        <th>Email Verified At</th>
-        <th>Created At</th>
-        <th>Updated At</th>
+{{--        <th>Email Verified At</th>--}}
+{{--        <th>Created At</th>--}}
+{{--        <th>Updated At</th>--}}
+        <th>Position</th>
+        <th>Requirements</th>
+        <th>Tasks</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     @if($users->isEmpty())
         <tr>
-            <td colspan="8" class="text-center">There are no lsited users.</td>
+            <td colspan="8" class="text-center">There are no listed users.</td>
         </tr>
     @else
         @foreach($users as $user)
             <tr class="text-black">
                 <td>{{ $user->account_number }}</td>
                 <td class="text-nowrap truncate">{{ ucwords($user->name) }}</td>
-                <td>{{ ucwords($user->role) }}</td>
                 <td class="text-nowrap truncate">{{ $user->email }}</td>
-                <td class="text-nowrap truncate">{{ $user->email_verified_at }}</td>
-                <td class="text-nowrap truncate">{{ $user->created_at }}</td>
-                <td class="text-nowrap truncate">{{ $user->updated_at }}</td>
+{{--                <td class="text-nowrap truncate">{{ $user->email_verified_at }}</td>--}}
+{{--                <td class="text-nowrap truncate">{{ $user->created_at }}</td>--}}
+{{--                <td class="text-nowrap truncate">{{ $user->updated_at }}</td>--}}
+                <td class="truncate">{{ $user->position ? $user->position->name : 'No Position' }}</td>
+                <td>{{ $user->requirements->count() }}</td>
+                <td>{{ $user->tasks->count() }}</td>
                 <td class="flex flex-row gap-2">
                     <a href="{{ route('users.show', $user->id) }}"
                        class="text-green-500 hover:text-green-700 transition-all"><i

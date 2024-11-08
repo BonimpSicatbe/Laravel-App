@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Position;
+use App\Models\PositionUser;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
@@ -34,7 +36,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'account_number' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
-            'role' => ['required', 'string', 'max:255'],
+//            'role' => ['required', 'string', 'max:255'],
             'position' => ['required', 'int', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -43,11 +45,18 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'account_number' => $request->account_number,
             'name' => $request->name,
-            'role' => $request->role,
-            'position' => $request->position,
+//            'role' => $request->role,
+//            'position' => $request->position,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        PositionUser::create([
+            'user_id' => $user->id,
+            'position_id' => $request->position
+        ]);
+
+        $user->assignRole('user');
 
         event(new Registered($user));
 

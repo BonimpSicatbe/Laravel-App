@@ -130,14 +130,14 @@
                 <x-input-error :messages="$errors->get('email')" class="mt-2"/>
             </div>
 
-            <div>
-                <x-input-label for="role" :value="__('Role')"/>
-                <x-select-input name="role" id="role" selectLabel="Select Role" class="w-full">
-                    <option value="admin">Admin</option>
-                    <option value="coordinator">Coordinator</option>
-                </x-select-input>
-                <x-input-error :messages="$errors->get('role')" class="mt-2"/>
-            </div>
+{{--            <div>--}}
+{{--                <x-input-label for="role" :value="__('Role')"/>--}}
+{{--                <x-select-input name="role" id="role" selectLabel="Select Role" class="w-full">--}}
+{{--                    <option value="admin">Admin</option>--}}
+{{--                    <option value="coordinator">Coordinator</option>--}}
+{{--                </x-select-input>--}}
+{{--                <x-input-error :messages="$errors->get('role')" class="mt-2"/>--}}
+{{--            </div>--}}
 
             <div>
                 <x-input-label for="course" :value="__('Course')"/>

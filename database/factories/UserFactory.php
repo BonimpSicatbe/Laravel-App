@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\Position;
+use App\Models\PositionUser;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -25,15 +27,23 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'account_number' => fake()->numerify('#########'),
-            'name' => fake()->name(),
-            'role' => fake()->randomElement(['admin', 'instructor', 'coordinator']),
-            'position' => Position::inRandomOrder()->first()->id,
-            'email' => fake()->unique()->safeEmail(),
+            'account_number' => fake()->unique()->numerify('2024#####'),
+            'name' => fake()->name,
+            'email' => fake()->unique()->safeEmail,
+            'password' => bcrypt('password'), // default password for testing
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (User $user) {
+            // Create a PositionUser record after the User is created
+            PositionUser::create([
+                'user_id' => $user->id,
+                'position_id' => Position::inRandomOrder()->first()->id,
+            ]);
+        });
     }
 
     /**

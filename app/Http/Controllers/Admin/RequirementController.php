@@ -1,20 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\RequirementResource;
-use App\Http\Resources\TaskResource;
+use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\CourseUser;
-use App\Models\File;
 use App\Models\Position;
-use App\Models\PositionUser;
 use App\Models\Requirement;
 use App\Models\RequirementUser;
 use App\Models\Subject;
-use App\Models\SubjectUser;
 use App\Models\Task;
-use App\Models\TaskUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +26,7 @@ class RequirementController extends Controller
         $requirements = Requirement::with(['tasks', 'users'])
             ->get();
 
-        return view('requirements.index', compact('requirements'));
+        return view('admin.requirements.index', compact('requirements'));
     }
 
     /**
@@ -44,7 +38,7 @@ class RequirementController extends Controller
         $subjects = Subject::all();
         $positions = Position::all();
 
-        return view('requirements.create', compact(
+        return view('admin.requirements.create', compact(
             'courses',
             'subjects',
             'positions',
@@ -134,7 +128,7 @@ class RequirementController extends Controller
         }
 
         // Step 5: Redirect to the Task Creation page with the newly created requirement ID
-        return redirect()->route('tasks.create', ['requirement' => $requirement->id])
+        return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
             ->with('success', 'Requirement created successfully and users assigned!');
     }
 
@@ -148,7 +142,7 @@ class RequirementController extends Controller
             ->where('requirement_id', $requirement->id)
             ->get();
 
-        return view('requirements.show', compact(
+        return view('admin.requirements.show', compact(
             'requirement',
             'tasks',
         ));
@@ -159,7 +153,7 @@ class RequirementController extends Controller
      */
     public function edit(Requirement $requirement)
     {
-        return view('requirements.edit', compact(
+        return view('admin.requirements.edit', compact(
             'requirement',
         ));
     }
@@ -187,7 +181,7 @@ class RequirementController extends Controller
         ]);
 
         // Redirect back to the requirements list with a success message
-        return redirect()->route('requirements.show', $requirement->id)->with('success', 'Requirement updated successfully.');
+        return redirect()->route('admin.requirements.show', $requirement->id)->with('success', 'Requirement updated successfully.');
     }
 
     /**
@@ -201,7 +195,7 @@ class RequirementController extends Controller
         // Then delete the requirement
         $requirement->delete();
 
-        return redirect()->route('requirements.index')->with('success', 'Requirement and associated tasks deleted successfully.');
+        return redirect()->route('admin.requirements.index')->with('success', 'Requirement and associated tasks deleted successfully.');
     }
 
     /*
@@ -232,7 +226,7 @@ class RequirementController extends Controller
 
 //        dd($tasks);
 
-        return view('requirements.tasks', compact(
+        return view('admin.requirements.tasks', compact(
             'tasks',
         ));
     }

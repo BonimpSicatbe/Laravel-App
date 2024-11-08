@@ -1,79 +1,129 @@
 <?php
 
-use App\Http\Controllers\AttachmentController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FileController;
-use App\Http\Controllers\FileUploadController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\Admin\NotificationController as Admin_NotificationController;
+use App\Http\Controllers\Admin\PortfolioController as Admin_PortfolioController;
+use App\Http\Controllers\Admin\RequirementController as Admin_RequirementController;
+use App\Http\Controllers\Admin\RoleController as Admin_RoleController;
+use App\Http\Controllers\Admin\TaskController as Admin_TaskController;
+use App\Http\Controllers\Admin\UserController as Admin_UserController;
+use App\Http\Controllers\Admin\FileController as Admin_FileController;
+use App\Http\Controllers\Admin\DashboardController as Admin_DashboardController;
+use App\Http\Controllers\Admin\PermissionController as Admin_PermissionController;
+
+use App\Http\Controllers\User\DashboardController as User_DashboardController;
+use App\Http\Controllers\User\PortfolioController as User_PortfolioController;
+use App\Http\Controllers\User\FileController as User_FileController;
+//use App\Http\Controllers\User\ArchiveController as User_ArchiveController;
+use App\Http\Controllers\User\NotificationController as User_NotificationController;
+use App\Http\Controllers\User\RequirementController as User_RequirementController;
+use App\Http\Controllers\User\TaskController as User_TaskController;
+//use App\Http\Controllers\User\ProgressController as User_ProgressController;
+//use App\Http\Controllers\User\RecentController as User_RecentController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RequirementController;
-use App\Http\Controllers\TaskController;
-use App\Http\Controllers\UploadController;
-use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+// ===== ADMIN =====
+
+// ===== USER =====
+
 
 Route::get('/', function () {
     return view('../auth/login');
 });
 
-
-Route::resource('notifications', NotificationController::class)->middleware(['auth', 'verified']);
-
-// REQUIREMENTS
-//Route::get('requirements/{id}/tasks', [RequirementController::class, 'tasks'])->name('requirementsTaskList')->middleware(['auth', 'verified']);
-//Route::get('requirements/{id}/tasks/{taskId}', [TaskController::class, 'index'])->name('requirements.showTasks')->middleware(['auth', 'verified']);
-Route::delete('/requirements/{requirement}/user/{user}', [RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
-Route::resource('requirements', RequirementController::class)->middleware(['auth', 'verified']);
-
-
-// TASKS
-Route::resource('/tasks', TaskController::class)->middleware(['auth', 'verified']);
-
-// PORTFOLIO
-Route::resource('portfolios', PortfolioController::class)->middleware(['auth', 'verified']);
-
-Route::resource('/users', UserController::class)->middleware(['auth', 'verified']);
-Route::resource('/files', FileController::class)->middleware(['auth', 'verified']); // todo (functionality): delete, download, view
-
-Route::get('files/showTasks/{id}', [FileController::class, 'showTasks'])->name('tasks.showTasks')->middleware(['auth', 'verified']);
-/*
-Route::get('/requirements', [FileController::class, 'index'])->name('requirements.index');
-Route::get('/requirements/{requirement}', [FileController::class, 'showRequirementFolders'])->name('requirements.show');
-Route::get('/tasks/{task}', [FileController::class, 'showTaskFolders'])->name('tasks.show');
-*/
-Route::resource('dashboard', DashboardController::class)->middleware(['auth', 'verified']);
-Route::resource('attachments', AttachmentController::class)->middleware(['auth', 'verified']);
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//Route::group(['middleware' => ['auth']], function () {
-//    Route::group([
-//        'prefix' => 'admin',
-//        'middleware' => ['is_admin'],
-//        'as' => 'admin.'
-//    ], function () {
-//        Route::resource('tasks', \App\Http\Controllers\Admin\TaskController::class);
-//        Route::resource('tasks', \App\Http\Controllers\Admin\RequirementController::class);
-//        Route::resource('dashboard', \App\Http\Controllers\Admin\DashboardController::class);
-//        Route::resource('portfolios', \App\Http\Controllers\Admin\PortfolioController::class);
-//        Route::resource('/files', \App\Http\Controllers\Admin\FileController::class);
-//        Route::resource('notifications', \App\Http\Controllers\Admin\NotificationController::class);
-//        Route::resource('requirements', \App\Http\Controllers\Admin\RequirementController::class);
-//    });
-//
-//    Route::group([
-//        'prefix' => 'user',
-//        'as' => 'admin.'
-//    ], function () {
-//        Route::resource('tasks', \App\Http\Controllers\User\TaskController::class);
-//        Route::resource('tasks', \App\Http\Controllers\User\RequirementController::class);
-//    });
-//});
+Route::group(['middleware' => ['auth']], function () {
 
+    // ===== ADMIN =====
+    Route::group([
+        'prefix' => 'admin',
+        'middleware' => ['role:admin|super-admin'],
+        'as' => 'admin.',
+    ], function () {
+        // ===== DASHBOARD =====
+        Route::resource('dashboard', Admin_DashboardController::class);
+
+        // ===== NOTIFICATIONS =====
+        Route::resource('notifications', Admin_NotificationController::class);
+
+        // ===== REQUIREMENTS =====
+        Route::delete('/requirements/{requirement}/user/{user}', [Admin_RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
+        Route::resource('requirements', Admin_RequirementController::class);
+
+        // ===== TASKS =====
+        Route::post('upload', [Admin_TaskController::class, 'upload'])->name('tasks.upload');
+        Route::resource('tasks', Admin_TaskController::class);
+
+        // ===== PORTFOLIO =====
+        Route::resource('portfolios', Admin_PortfolioController::class);
+
+        // ===== ROLES =====
+        // Route::get('/roles/{role}/permissions', [Admin_RoleController::class, 'get_permissions'])->name('get_permissions');
+        Route::get('/roles/{role}/assign-user-roles', [Admin_RoleController::class, 'assign_user_roles'])->name('assign_user_roles');
+        Route::delete('/roles/{role}/remove-user/{user}', [Admin_RoleController::class, 'remove_user_from_role'])->name('remove_user_from_role');
+        Route::post('/roles/{role}/store-user-roles', [Admin_RoleController::class, 'store_user_roles'])->name('store_user_roles');
+        Route::get('/roles/{role}/assign-permissions', [Admin_RoleController::class, 'assign_permission'])->name('assign_permission');
+        Route::post('/roles/{role}/store-permissions', [Admin_RoleController::class, 'store_permission'])->name('store_permission');
+        Route::delete('/roles/{role}/remove-permission/{permission}', [Admin_RoleController::class, 'remove_permission_from_role'])->name('remove_permission_from_role');
+        Route::resource('roles', Admin_RoleController::class);
+
+        // ===== PERMISSIONS =====
+        Route::resource('permissions', Admin_PermissionController::class);
+
+        // ===== USERS =====
+        Route::resource('/users', Admin_UserController::class);
+
+        // ===== FILES =====
+        Route::resource('files', Admin_FileController::class);
+
+    });
+
+    // ===== USER =====
+    Route::group([
+        'prefix' => 'user',
+        'middleware' => ['role:user'],
+        'as' => 'user.',
+    ], function () {
+        // ===== DASHBOARD =====
+        Route::resource('dashboard', User_DashboardController::class);
+
+        // ===== PORTFOLIO =====
+        Route::resource('portfolios', User_PortfolioController::class);
+
+        // ===== FILE MANAGER =====
+        Route::resource('files', User_FileController::class);
+
+        // ===== ARCHIVE =====
+//        Route::resource('archives', User_ArchiveController::class);
+
+        // ===== NOTIFICATION =====
+        Route::resource('notifications', User_NotificationController::class);
+
+        // ===== REQUIREMENTS =====
+        Route::delete('/requirements/{requirement}/user/{user}', [User_RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
+        Route::resource('requirements', User_RequirementController::class);
+
+        // ===== TASKS =====
+        Route::resource('tasks', User_TaskController::class);
+
+        // ===== PROGRESS =====
+        // ===== RECENT =====
+    });
+});
+
+
+/*
+Route::get('files/showTasks/{id}', [FileController::class, 'showTasks'])->name('tasks.showTasks')->middleware(['auth', 'verified']);
+Route::resource('dashboard', DashboardController::class)->middleware(['auth', 'verified']);
+Route::get('/requirements', [FileController::class, 'index'])->name('requirements.index');
+Route::get('/requirements/{requirement}', [FileController::class, 'showRequirementFolders'])->name('requirements.show');
+Route::get('/tasks/{task}', [FileController::class, 'showTaskFolders'])->name('tasks.show');
+Route::resource('attachments', AttachmentController::class)->middleware(['auth', 'verified']);
+*/
 
 require __DIR__ . '/auth.php';

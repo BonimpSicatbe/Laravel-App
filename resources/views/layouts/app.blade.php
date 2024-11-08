@@ -31,9 +31,12 @@
     <!-- Page Content -->
     <main>
         <div class="flex flex-row absolute w-full h-full">
-            <div class="flex flex-col relative w-fit">
-                @include('layouts.navigation')
-            </div>
+            {{--sidebar--}}
+            @if(Auth::user()->hasRole('role:admin|super-admin'))
+                <div class="flex flex-col relative w-fit">@include('admin.layouts.navigation')</div>
+            @else
+                <div class="flex flex-col relative w-fit">@include('user.layouts.navigation')</div>
+            @endif
 
             <div class="flex flex-col h-full w-full gap-4 relative bg-gray-100">
                 {{--interface section--}}

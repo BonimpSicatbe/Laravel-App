@@ -11,15 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, HasRoles;
 
     protected $fillable = [
         'account_number',
         'name',
-        'role',
         'position',
         'email',
         'password',
@@ -40,92 +40,63 @@ class User extends Authenticatable
 
     public function requirements()
     {
-        return $this->hasMany(Requirement::class);
+        return $this->hasManyThrough(
+            Requirement::class,
+            RequirementUser::class,
+            'user_id',
+            'id',
+            'id',
+            'requirement_id',
+        );
     }
 
     public function tasks()
     {
-        return $this->belongsToMany(
+        return $this->hasManyThrough(
             Task::class,
-            'task_users',
+            RequirementUser::class,
+            'user_id',
+            'requirement_id',
+            'id',
+            'id'
         );
-    }
-
-    public function files()
-    {
-        return $this->hasMany(File::class);
-    }
-
-    public function courses()
-    {
-        return $this->belongsTo(Course::class, 'course_users');
-    }
-
-    public function subjects()
-    {
-        return $this->belongsToMany(Subject::class, 'subject_users');
     }
 
     public function position()
     {
-        return $this->hasOne(Position::class, 'position_users');
+        return $this->hasOneThrough(
+            Position::class,
+            PositionUser::class,
+            'user_id',
+            'id',
+            'id',
+            'position_id',
+        );
     }
 
-    // =========================
-//    /*
-//     *
-//     * HAS ONE
-//     *
-//     * */
-//
-//    public function positionUser(): HasOne
-//    {
-//        return $this->hasone(PositionUser::class);
-//    }
-//
-//    /*
-//     *
-//     * BELONGS TO MANY
-//     *
-//     * */
-//
-//
-//    /*
-//     *
-//     * HAS MANY
-//     *
-//     * */
-//
-//
-//    public function requirementUsers(): HasMany
-//    {
-//        return $this->hasMany(RequirementUser::class);
-//    }
-//
-//    public function notifications(): HasMany
-//    {
-//        return $this->hasMany(Notification::class);
-//    }
-//
-//    public function subjectUsers(): HasMany
-//    {
-//        return $this->hasMany(SubjectUser::class);
-//    }
-//
-//    public function folders(): HasMany
-//    {
-//        return $this->hasMany(Folder::class);
-//    }
+    public function courses()
+    {
+        return $this->hasManyThrough(
+            Course::class,
+            CourseUser::class,
+            'user_id',
+            'id',
+            'id',
+            'course_id',
+        );
+    }
 
+    public function subjects()
+    {
+        return $this->hasManyThrough(
+            Subject::class,
+            SubjectUser::class,
+            'user_id',
+            'id',
+            'id',
+            'subject_id',
+        );
+    }
+    // ====================
 
-    /*
-     *
-     * HAS MANY THROUGH
-     *
-     * */
-
-//    public function tasks(): HasManyThrough
-//    {
-//        return $this->hasManyThrough(Task::class, Requirement::class);
-//    }
 }

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -35,6 +36,7 @@ class Requirement extends Model
         'status' => 'string',
     ];
 
+    // ===== ADMIN =====
 
     public function user()
     {
@@ -97,4 +99,6 @@ class Requirement extends Model
         };
     }
 
+
+    // ===== USER =====
 }
