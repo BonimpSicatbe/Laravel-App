@@ -10,6 +10,7 @@ use App\Models\RequirementUser;
 use App\Models\Subject;
 use App\Models\Task;
 use App\Models\User;
+use App\Notifications\RequirementAssignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -125,9 +126,17 @@ class RequirementController extends Controller
         // Step 4: Attach users to the requirement (many-to-many relationship)
         if ($users->isNotEmpty()) {
             $requirement->users()->attach($users->toArray());
+
+            // Step 5: Notify each assigned user about the new requirement
+            foreach ($users as $userId) {
+                $user = User::find($userId);
+                $user->notify(new RequirementAssignedNotification($requirement));
+            }
         }
 
-        // Step 5: Redirect to the Task Creation page with the newly created requirement ID
+
+
+        // Step 6: Redirect to the Task Creation page with the newly created requirement ID
         return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
             ->with('success', 'Requirement created successfully and users assigned!');
     }

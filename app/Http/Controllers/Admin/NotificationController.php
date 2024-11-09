@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +16,13 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::where('user_id', Auth::id()) // displays notification that's within a day after being sent
-        ->where('created_at', '>=', Carbon::now()->subDay())
+        $notifications = Notification::where('notifiable_id', Auth::user()->id)  // $userId is the ID of the user
+        ->where('notifiable_type', User::class)
+            ->where('created_at', '>=', now()->subDays(1))
             ->get();
-        return view('notifications.index', compact('notifications'));
+
+
+        return view('admin.notifications.index', compact('notifications'));
     }
 
     /**
@@ -48,7 +52,7 @@ class NotificationController extends Controller
             // ->with(['user', 'relatedModel'])
             ->get();
 
-        return view('notifications.show', compact(
+        return view('admin.notifications.show', compact(
             'notification',
             'notifications',
         ));

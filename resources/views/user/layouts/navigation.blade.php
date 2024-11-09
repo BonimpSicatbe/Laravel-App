@@ -13,15 +13,15 @@
                             <div class="text-sm font-light tracking-wide text-gray-500">Menu</div>
                         </div>
                     </li>
-                    <x-nav-link href="{{ route('admin.dashboard.index') }}" :active="request()->is('dashboard*')"
+                    <x-nav-link href="{{ route('user.dashboard.index') }}" :active="request()->is('dashboard*')"
                                 iconClass="fa-home" slotLabel="Dashboard"/>
-                    <x-nav-link href="{{ route('admin.portfolios.index') }}" :active="request()->is('portfolios*')"
+                    <x-nav-link href="{{ route('user.portfolios.index') }}" :active="request()->is('portfolios*')"
                                 iconClass="fa-table-columns" slotLabel="Portfolio"/>
-                    <x-nav-link href="{{ route('admin.files.index') }}" :active="request()->is('files*')"
+                    <x-nav-link href="{{ route('user.files.index') }}" :active="request()->is('files*')"
                                 iconClass="fa-folder-open" slotLabel="File Manager"/>
                     <x-nav-link href="" :active="request()->is('archive*')" iconClass="fa-archive"
                                 slotLabel="Archive"/>
-                    <x-nav-link href="{{ route('admin.notifications.index') }}" :active="request()->is('notifications*')"
+                    <x-nav-link href="{{ route('user.notifications.index') }}" :active="request()->is('notifications*')"
                                 iconClass="fa-bell" slotLabel="Notifications"/>
 
                     {{--tasks--}}
@@ -30,9 +30,9 @@
                             <div class="text-sm font-light tracking-wide text-gray-500">Tasks</div>
                         </div>
                     </li>
-                    <x-nav-link href="{{ route('admin.requirements.index') }}" :active="request()->is('requirements*')"
+                    <x-nav-link href="{{ route('user.requirements.index') }}" :active="request()->is('requirements*')"
                                 iconClass="fa-tasks" slotLabel="Requirements"/>
-                    <x-nav-link href="{{ route('admin.tasks.index') }}" :active="request()->is('tasks*')"
+                    <x-nav-link href="{{ route('user.tasks.index') }}" :active="request()->is('tasks*')"
                                 iconClass="fa-clipboard-list" slotLabel="Tasks"/>
                     <x-nav-link href="" :active="request()->is('progress*')" iconClass="fa-spinner"
                                 slotLabel="Progress"/>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Task;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +22,11 @@ class DashboardController extends Controller
         $tasks = Task::where('status', ['pending', 'in_progress'])
             ->get();
 
-        $notifications = Notification::where('user_id', $user->id) // displays notification that's within a day after being sent
-            ->where('created_at', '>=', Carbon::now()->subDay())
+        $notifications = Notification::where('notifiable_id', $user->id)  // $userId is the ID of the user
+        ->where('notifiable_type', User::class)
+            ->where('created_at', '>=', now()->subDays(1))
             ->get();
+
 
         return view('admin.dashboard.index', compact([
             'notifications',

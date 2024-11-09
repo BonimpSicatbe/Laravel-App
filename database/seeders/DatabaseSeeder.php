@@ -63,6 +63,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $regularUser->assignRole('user'); // Assign the user role to the regular user
+
+        PositionUser::create([
+            'user_id' => $regularUser->id, // Use the actual ID of the created admin user
+            'position_id' => 1,
+        ]);
+
     }
 
 }

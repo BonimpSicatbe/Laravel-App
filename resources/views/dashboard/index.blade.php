@@ -5,7 +5,7 @@
         <div class="text-lg font-bold">Overview</div>
 
         <div class="flex w-full flex-row justify-between overflow-y-auto gap-2">
-            @include('dashboard.partials.dashboard-overview')
+            @include('user.dashboard.partials.dashboard-overview')
         </div>
     </x-container-section>
 
@@ -15,7 +15,7 @@
                 <div class="p-6 bg-white border-b border-gray-200 w-full space-y-6">
                     <div class="text-lg font-bold">Notifications</div>
                     <div class="overflow-y-auto h-[250px]">
-                        @include('notifications.partials.notification-lists', ['notifications' => $notifications])
+                        @include('user.notifications.partials.notification-lists', ['notifications' => $notifications])
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,10 +16,14 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::where('user_id', Auth::id()) // displays notification that's within a day after being sent
-        ->where('created_at', '>=', Carbon::now()->subDay())
-            ->get();
-        return view('notifications.index', compact('notifications'));
+//        $notifications = Notification::where('notifiable_type', User::class)
+//            ->where('notifiable_id', Auth::id())
+//            ->orderBy('created_at', 'desc')
+//            ->get();
+
+        $notifications = Auth::user()->notifications;
+
+        return view('user.notifications.index', compact('notifications'));
     }
 
     /**
@@ -42,13 +47,24 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
-        // Get the authenticated user's notifications with potential eager loading if needed
-        $notifications = Notification::where('user_id', Auth::id())
-            // Example: eager load relationships if you have any, like 'user', 'relatedModel'
-            // ->with(['user', 'relatedModel'])
-            ->get();
+        if ($notification->notifiable_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
-        return view('notifications.show', compact(
+//         Get the authenticated user's notifications with potential eager loading if needed
+        $notifications = Notification::where('notifiable_type', User::class)
+            ->where('notifiable_id', Auth::id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+//
+        $notification = Auth::user()->notifications()->where('id', $notification->id)->firstOrFail();
+
+        if (is_null($notification->read_at)) {
+            $notification->markAsRead();
+        }
+
+//        dd($notification);
+        return view('user.notifications.show', compact(
             'notification',
             'notifications',
         ));

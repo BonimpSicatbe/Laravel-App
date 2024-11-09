@@ -43,6 +43,8 @@ class UserFactory extends Factory
                 'user_id' => $user->id,
                 'position_id' => Position::inRandomOrder()->first()->id,
             ]);
+
+            $user->assignRole('user');
         });
     }
 

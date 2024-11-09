@@ -1,4 +1,4 @@
-<a href="{{ route('files.index')}}"
+<a href="{{ route('admin.files.index')}}"
     class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
     <i class="fa-solid hover:fa-solid fa-file text-7xl"></i>
     <div class="text-lg font-bold">All Files</div>
@@ -12,7 +12,7 @@
     {{--        <div class="text-sm">$item->size</div>--}}
 </a>
 
-<a href="{{ route('files.index') }}"
+<a href="{{ route('admin.files.index') }}"
     class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
     <i class="fa-solid hover:fa-solid fa-folder text-7xl"></i>
     <div class="text-lg font-bold">Folders</div>
@@ -26,7 +26,7 @@
     {{--        <div class="text-sm">$item->size</div>--}}
 </a>
 
-<a href="{{ route('files.index') }}"
+<a href="{{ route('admin.files.index') }}"
     class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
     <i class="fa-solid hover:fa-solid fa-file-lines text-7xl"></i>
     <div class="text-lg font-bold">Documents</div>
@@ -40,7 +40,7 @@
     {{--        <div class="text-sm">$item->size</div>--}}
 </a>
 
-<a href="{{ route('files.index') }}"
+<a href="{{ route('admin.files.index') }}"
     class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
     <i class="fa-solid hover:fa-solid fa-photo-film text-7xl"></i>
     <div class="text-lg font-bold">Media</div>

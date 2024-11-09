@@ -15,7 +15,7 @@
             <div class="grow bg-white overflow-y-auto shadow-sm sm:rounded-lg">
                 <div class="p-4 bg-white overflow-x-auto w-full space-y-1">
                     {{--notification lists--}}
-                    @include('notifications.partials.notification-lists', ['notifications' => $notifications])
+                    @include('admin.notifications.partials.notification-lists', ['notifications' => $notifications])
                 </div>
             </div>
         </div>

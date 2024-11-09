@@ -6,8 +6,8 @@
     @foreach($notifications as $notification)
 
         {{--card container--}}
-        {{--    <a href="{{ route('notifications.show', ['notification' => $notification->id]) }}" class="flex flex-row shadow-lg rounded-lg gap-4 p-4">--}}
-        <a href="{{ route('notifications.show', $notification->id) }}"
+        {{--    <a href="{{ route('admin.notifications.show', ['notification' => $notification->id]) }}" class="flex flex-row shadow-lg rounded-lg gap-4 p-4">--}}
+        <a href="{{ route('admin.notifications.show', $notification->id) }}"
            class="flex flex-row rounded-lg gap-4 p-2 hover:bg-gray-100">
             {{--left--}}
             <i class="fa-solid fa-user-circle text-5xl"></i>
