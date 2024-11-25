@@ -34,7 +34,7 @@
                         {{ $notification->data['name'] ?? 'Notification' }}
                     </div>
                     @if(is_null($notification->read_at))
-                        <span class="badge badge-success badge-xs">New</span>
+                        <span class="badge badge-success badge-xs"></span>
                     @endif
                 </div>
 
