@@ -38,15 +38,18 @@
                         </div>
 
                         {{-- icon action button --}}
+                        {{--                        @if(Auth::user()->hasRole('super-admin|admin'))--}}
                         <div class="dropdown dropdown-end">
                             <div tabindex="0" role="button" class=""><i class="fa-solid fa-ellipsis"></i></div>
                             <ul tabindex="0"
                                 class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                {{--
                                 <li><a href="{{ route('user.notifications.edit', $notification->id) }}"
                                        class="text-blue-500">
                                         <i class="fa-solid fa-edit"></i>
                                         <span>Edit</span>
                                     </a></li>
+                                    --}}
                                 <li><a href="{{ route('user.notifications.destroy', $notification->id) }}"
                                        class="text-red-500">
                                         <i class="fa-solid fa-trash"></i>
@@ -54,6 +57,8 @@
                                     </a></li>
                             </ul>
                         </div>
+                        {{--                        @endif--}}
+
                     </div>
 
                     <div class="divider"></div>
@@ -68,7 +73,7 @@
                             </div>
                             <div class="text-sm">
                                 <strong class="text-gray-500">Sent to: </strong>
-{{--                                {{ $notification->user->name }}--}}
+                                {{--                                {{ $notification->user->name }}--}}
                             </div>
                         </div>
                     </div>

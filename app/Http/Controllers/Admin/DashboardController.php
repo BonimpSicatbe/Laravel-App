@@ -22,11 +22,12 @@ class DashboardController extends Controller
         $tasks = Task::where('status', ['pending', 'in_progress'])
             ->get();
 
-        $notifications = Notification::where('notifiable_id', $user->id)  // $userId is the ID of the user
-        ->where('notifiable_type', User::class)
-            ->where('created_at', '>=', now()->subDays(1))
-            ->get();
+//        $notifications = Notification::where('notifiable_id', $user->id)  // $userId is the ID of the user
+//        ->where('notifiable_type', User::class)
+//            ->where('created_at', '>=', now()->subDays(1))
+//            ->get();
 
+        $notifications = Auth::user()->notifications;
 
         return view('admin.dashboard.index', compact([
             'notifications',

@@ -79,10 +79,12 @@ TODO:
     </x-container-section>
 
     <dialog id="newTaskModal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <div class="text-lg font-bold">Add Task</div>
-            <form action="{{ route('admin.tasks.store', $requirement->id) }}" method="post" class="space-y-2">
+        <div class="modal-box xl:min-w-[50%] sm:min-w-[75%]">
+{{--            <div class="text-lg font-bold">Add Task</div>--}}
+            <form action="{{ route('admin.tasks.store', request()->requirement) }}" method="post" class="flex flex-col gap-4">
                 @csrf
+                <div class="text-lg font-bold">Enter Task Details</div>
+
                 <input type="hidden" name="requirement_id" value="{{ $requirement->id }}">
                 {{--task name--}}
                 <div class="">
@@ -103,7 +105,7 @@ TODO:
                 {{--task priority--}}
                 <div class="">
                     <x-input-label for="priority" :value="__('Priority')"></x-input-label>
-                    <x-select-input name="priority" id="priority" onchange="showSelect2(this.value)" class="capitalize">
+                    <x-select-input name="priority" id="priority" class="capitalize">
                         <option value="low" class="capitalize" selected>low</option>
                         <option value="medium" class="capitalize">medium</option>
                         <option value="high" class="capitalize">high</option>
@@ -118,12 +120,14 @@ TODO:
                     <x-input-error :messages="$errors->get('due_date')" class="mt-2"/>
                 </div>
 
-                {{--buttons--}}
-                <div class="flex flex-row justify-end gap-2">
-                    <button type="button" onclick="newTaskModal.close()"
-                            class="btn btn-sm btn-error text-white rounded-lg">Cancel
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-success text-white rounded-lg">Confirm</button>
+                <div class="">
+                    <x-input-label for="uploadTaskAttachment" :value="__('Upload Attachments')"/>
+                    <input type="file" id="uploadTaskAttachment" name="uploadTaskAttachment" multiple/>
+                </div>
+
+                <div class="flex justify-end items-center gap-2">
+                    <button type="button" onclick="newTaskModal.close()" class="btn btn-sm btn-error text-white">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-success text-white">Create Task</button>
                 </div>
             </form>
         </div>
@@ -154,4 +158,31 @@ TODO:
             </form>
         </div>
     </dialog>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get a reference to the file input element
+            const inputElement = document.querySelector('input[id="uploadTaskAttachment"]');
+
+            // Create a FilePond instance
+            const pond = FilePond.create(inputElement);
+
+            // Set options for FilePond
+            FilePond.setOptions({
+                server: {
+                    process: {
+                        url: '{{ route('admin.tasks.upload') }}',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        onload: (response) => {
+                            const { folder } = JSON.parse(response);
+                            document.querySelector('input[name="uploadTaskAttachment"]').value = folder;
+                        }
+                    },
+                    revert: './revert.php',
+                }
+            });
+        });
+
+    </script>
 </x-app-layout>

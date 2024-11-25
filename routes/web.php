@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController as Admin_UserController;
 use App\Http\Controllers\Admin\FileController as Admin_FileController;
 use App\Http\Controllers\Admin\DashboardController as Admin_DashboardController;
 use App\Http\Controllers\Admin\PermissionController as Admin_PermissionController;
+use App\Http\Controllers\Admin\UploadController as Admin_UploadController;
 
 use App\Http\Controllers\User\DashboardController as User_DashboardController;
 use App\Http\Controllers\User\PortfolioController as User_PortfolioController;
@@ -54,9 +55,10 @@ Route::group(['middleware' => ['auth']], function () {
         // ===== REQUIREMENTS =====
         Route::delete('/requirements/{requirement}/user/{user}', [Admin_RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
         Route::resource('requirements', Admin_RequirementController::class);
-
+;;;;
         // ===== TASKS =====
-        Route::post('upload', [Admin_TaskController::class, 'upload'])->name('tasks.upload');
+        Route::post('/tasks/upload', [Admin_TaskController::class, 'upload'])->name('tasks.upload');
+        Route::delete('/tasks/revert', [Admin_TaskController::class, 'revert'])->name('tasks.revert');
         Route::resource('tasks', Admin_TaskController::class);
 
         // ===== PORTFOLIO =====
@@ -81,6 +83,9 @@ Route::group(['middleware' => ['auth']], function () {
         // ===== FILES =====
         Route::resource('files', Admin_FileController::class);
 
+        // ===== FILEPOND =====
+        Route::post('/file_upload', [Admin_UploadController::class, 'upload'])->name('file.upload');
+        Route::delete('/file_revert', [Admin_UploadController::class, 'revert'])->name('file.revert');
     });
 
     // ===== USER =====

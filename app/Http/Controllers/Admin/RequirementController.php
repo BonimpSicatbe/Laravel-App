@@ -14,6 +14,7 @@ use App\Notifications\RequirementAssignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RequirementController extends Controller
 {
@@ -39,6 +40,7 @@ class RequirementController extends Controller
         $subjects = Subject::all();
         $positions = Position::all();
 
+//        Log::info('Redirecting admin.requirements.create');
         return view('admin.requirements.create', compact(
             'courses',
             'subjects',
@@ -137,6 +139,7 @@ class RequirementController extends Controller
 
 
         // Step 6: Redirect to the Task Creation page with the newly created requirement ID
+        Log::info('Requirement created successfully.');
         return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
             ->with('success', 'Requirement created successfully and users assigned!');
     }

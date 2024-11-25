@@ -18,7 +18,7 @@
                     <x-nav-link href="{{ route('admin.portfolios.index') }}" :active="request()->is('admin/portfolios*')"
                                 iconClass="fa-table-columns" slotLabel="Portfolio"/>
                     <x-nav-link href="{{ route('admin.files.index') }}" :active="request()->is('admin/files*')"
-                                iconClass="fa-folder-open" slotLabel="File Manager"/>
+                                iconClass="fa-folder-open" slotLabel="Files"/>
                     <x-nav-link href="" :active="request()->is('admin/archive*')" iconClass="fa-archive"
                                 slotLabel="Archive"/>
                     <x-nav-link href="{{ route('admin.notifications.index') }}"

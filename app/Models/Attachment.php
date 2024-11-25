@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Attachment extends Model
 {
+    protected $table = 'attachments';
+
     protected $fillable = [
         'name',
         'size',

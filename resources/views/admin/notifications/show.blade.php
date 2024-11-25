@@ -9,16 +9,16 @@
 
         {{--left--}}
         <div class="flex flex-col gap-6 sm:py-6 lg:py-8 w-1/3">
-            @auth
-                <form action="{{ route('admin.notifications.create') }}" method="post" class="">
-                    <button type="submit" class="btn btn-lg btn-outline bg-white shadow-lg w-full">Create New Notification</button>
-                </form>
-            @endauth
+            {{--            @auth--}}
+            {{--                <form action="{{ route('admin.notifications.create') }}" method="post" class="">--}}
+            {{--                    <button type="submit" class="btn btn-lg btn-outline bg-white shadow-lg w-full">Create New Notification</button>--}}
+            {{--                </form>--}}
+            {{--            @endauth--}}
 
             <div class="grow bg-white overflow-y-auto shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white overflow-x-auto w-full space-y-1">
                     {{--notification lists--}}
-                    @include('notifications.partials.notification-lists', ['notifications' => $notifications])
+                    @include('admin.notifications.partials.notification-lists', ['notifications' => $notifications])
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                     {{-- show notification section --}}
                     <div class="flex flex-row justify-between items-center w-full gap-4">
                         {{-- notification title --}}
-                        <div class="text-lg font-bold grow truncate">{{ $notification->title }}</div>
+                        <div class="text-lg font-bold grow truncate">{{ $notification->data['name'] }}</div>
 
                         {{-- sent date --}}
                         <div class="">
@@ -38,15 +38,18 @@
                         </div>
 
                         {{-- icon action button --}}
+                        {{--                        @if(Auth::user()->hasRole('super-admin|admin'))--}}
                         <div class="dropdown dropdown-end">
                             <div tabindex="0" role="button" class=""><i class="fa-solid fa-ellipsis"></i></div>
                             <ul tabindex="0"
                                 class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                                {{--
                                 <li><a href="{{ route('admin.notifications.edit', $notification->id) }}"
                                        class="text-blue-500">
                                         <i class="fa-solid fa-edit"></i>
                                         <span>Edit</span>
                                     </a></li>
+                                    --}}
                                 <li><a href="{{ route('admin.notifications.destroy', $notification->id) }}"
                                        class="text-red-500">
                                         <i class="fa-solid fa-trash"></i>
@@ -54,6 +57,8 @@
                                     </a></li>
                             </ul>
                         </div>
+                        {{--                        @endif--}}
+
                     </div>
 
                     <div class="divider"></div>
@@ -63,10 +68,12 @@
                         <i class="fa-solid fa-user-circle text-5xl"></i>
 
                         <div class="flex flex-col grow">
-                            <div class="text-lg font-semibold">{{ $notification->sender->name }}</div>
+                            <div class="text-lg font-semibold">
+                                {{ $notification->data['name'] }}
+                            </div>
                             <div class="text-sm">
                                 <strong class="text-gray-500">Sent to: </strong>
-                                {{ $notification->user->name }}
+                                {{--                                {{ $notification->user->name }}--}}
                             </div>
                         </div>
                     </div>
@@ -77,7 +84,7 @@
                     <div class="flex flex-col grow overflow-y-auto gap-4">
                         <div class="space-y-2">
                             <div class="text-sm text-gray-500">Message:</div>
-                            <div class="text-md">{{ $notification->message }}</div>
+                            <div class="text-md">{{ $notification->data['description'] }}</div>
                         </div>
                         <div class="space-y-2">
                             <div class="text-sm text-gray-500">Attachment/s:</div>
@@ -86,9 +93,8 @@
 
                             {{-- attachment container --}}
                             <div class="grid grid-cols-3 gap-2">
-                                @include('notifications.partials.notification-attachments', ['notification' => $notification])
+                                @include('admin.notifications.partials.notification-attachments', ['notification' => $notification->id])
                             </div>
-
                         </div>
                     </div>
 
@@ -98,7 +104,7 @@
                             <i class="fa-solid fa-reply"></i>
                             <span>Reply</span>
                         </button>
-                        <input type="file" class="file-input file-input-sm file-input-success file-input-bordered w-full max-w-xs" />
+                        <input type="file" class="file-input file-input-sm file-input-success file-input-bordered w-full max-w-xs"/>
                     </div>
                 </div>
 

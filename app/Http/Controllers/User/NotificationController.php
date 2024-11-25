@@ -52,10 +52,7 @@ class NotificationController extends Controller
         }
 
 //         Get the authenticated user's notifications with potential eager loading if needed
-        $notifications = Notification::where('notifiable_type', User::class)
-            ->where('notifiable_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $notifications = Auth::user()->notifications;
 //
         $notification = Auth::user()->notifications()->where('id', $notification->id)->firstOrFail();
 

@@ -23,41 +23,19 @@
     {{--uploaded files--}}
     <x-container-section>
         {{--name--}}
-        <div class="text-lg font-bold">
-            <i class="fa-regular fa-file-alt mr-2"></i>
-            <span>Uploaded Files</span>
+        <div class="flex flex-row justify-between">
+            <div class="text-lg font-bold grow">
+                <i class="fa-regular fa-file-alt mr-2"></i>
+                <span>Uploaded Files</span>
+            </div>
+            <button class="btn btn-sm btn-success text-white" onclick="uploadTaskFiles.showModal()">
+                <i class="fa-solid fa-plus"></i>
+                <span>Upload</span>
+            </button>
         </div>
 
         {{--file attachments--}}
         <div class="flex flex-col gap-2 overflow-y-auto max-h-[500px]">
-            <!--
-            {{-- sort section --}}
-            <div class="flex flex-row gap-2">
-                {{--sort status--}}
-            <x-select-input class="focus:border-green-500" select-label="Select Status">
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </x-select-input>
-
-{{--sort status--}}
-            <x-select-input class="focus:border-green-500" select-label="Select Status">
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </x-select-input>
-
-{{--search bar--}}
-            <x-text-input class="" placeholder="Search..."/>
-
-{{--add new file--}}
-            <button class="btn btn-outline btn-success" onclick="newRequirementModal.showModal()">
-                <i class="fa-solid fa-plus"></i>
-                <span>New Requirement</span>
-            </button>
-
-        </div>
--->
             {{--table--}}
             @include('admin.tasks.partials.tasks-uploaded-file-table-lists')
         </div>
@@ -107,3 +85,44 @@
         });
     </script>
 </x-app-layout>
+
+{{--add assigned user--}}
+
+
+{{--upload task files--}}
+<dialog id="uploadTaskFiles" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl space-y-2">
+        {{--        <p class="py-4">Click the button below to close</p>--}}
+                <h3 class="text-lg font-bold">Upload Task Files</h3>
+
+        <div class="modal-action">
+            <form action="{{ route('admin.tasks.store', $task->requirement) }}" class="flex flex-col gap-2 w-full">
+                <input type="file" id="attachments" name="attachments" multiple/>
+
+                <div class="text-end">
+{{--                    <a href="{{ route('admin.tasks.show', $task->id) }}" class="btn btn-sm">Close</a>--}}
+                    <button type="button" onclick="uploadTaskFiles.close()" class="btn btn-sm">Close</button>
+                    <button type="submit" class="btn btn-sm btn-success text-white">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</dialog>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputElement = document.querySelector('input[id="attachments"]');
+
+        const pond = FilePond.create(inputElement);
+
+        FilePond.setOptions({
+            server: {
+                process: '{{ route('admin.file.upload') }}',
+                revert: '{{ route('admin.file.revert') }}',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+            },
+        });
+    });
+</script>

@@ -14,7 +14,7 @@
     <tbody>
     @if($task->files->isEmpty())
         <tr>
-            <td colspan="6" class="text-center">There are no files uploaded.</td>
+            <td colspan="7" class="text-center">There are no files uploaded.</td>
         </tr>
     @else
         @foreach ($task->files as $file)

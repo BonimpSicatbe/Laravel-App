@@ -16,10 +16,12 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Notification::where('notifiable_id', Auth::user()->id)  // $userId is the ID of the user
-        ->where('notifiable_type', User::class)
-            ->where('created_at', '>=', now()->subDays(1))
-            ->get();
+//        $notifications = Notification::where('notifiable_id', Auth::user()->id)  // $userId is the ID of the user
+//        ->where('notifiable_type', User::class)
+//            ->where('created_at', '>=', now()->subDays(1))
+//            ->get();
+
+        $notifications = Auth::user()->notifications;
 
 
         return view('admin.notifications.index', compact('notifications'));
@@ -46,12 +48,20 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
-        // Get the authenticated user's notifications with potential eager loading if needed
-        $notifications = Notification::where('user_id', Auth::id())
-            // Example: eager load relationships if you have any, like 'user', 'relatedModel'
-            // ->with(['user', 'relatedModel'])
-            ->get();
+        if ($notification->notifiable_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
+//         Get the authenticated user's notifications with potential eager loading if needed
+        $notifications = Auth::user()->notifications;
+//
+        $notification = Auth::user()->notifications()->where('id', $notification->id)->firstOrFail();
+
+        if (is_null($notification->read_at)) {
+            $notification->markAsRead();
+        }
+
+//        dd($notification);
         return view('admin.notifications.show', compact(
             'notification',
             'notifications',

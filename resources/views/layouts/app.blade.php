@@ -65,6 +65,7 @@
 </div>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         const successMessage = document.getElementById('success-message');
 

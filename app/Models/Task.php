@@ -65,13 +65,13 @@ class Task extends Model
 
     public function attachments(): HasMany
     {
-        return $this->hasMany(Attachment::class);
+        return $this->hasMany(
+            Attachment::class
+        );
     }
 
     public function folders(): HasMany
     {
         return $this->hasMany(Folder::class);
     }
-
-
 }

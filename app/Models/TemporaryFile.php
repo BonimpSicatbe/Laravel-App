@@ -10,4 +10,6 @@ class TemporaryFile extends Model
     use HasFactory;
 
     protected $fillable = ['filename', 'folder'];
+
+    protected $table = 'temporary_files';
 }

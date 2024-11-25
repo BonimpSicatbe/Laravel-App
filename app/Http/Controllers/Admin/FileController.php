@@ -112,4 +112,28 @@ class FileController extends Controller
 
         return redirect()->route('files.index')->with('success', 'File deleted successfully!');
     }
+
+    // =========================
+    public function uploadTemporaryFile(Request $request)
+    {
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $folder = uniqid() . '-' . now()->timestamp;
+            $filename = $file->getClientOriginalName();
+
+            $file->storeAs("public/upload_attachments/tmp/{$folder}", $filename);
+
+            return response()->json(['folder' => $folder, 'filename' => $filename]);
+        }
+
+        return response()->json(['message' => 'No file uploaded'], 400);
+    }
+
+    public function revertTemporaryFile(Request $request)
+    {
+        $folder = $request->get('folder');
+        Storage::deleteDirectory("public/upload_attachments/tmp/{$folder}");
+
+        return response()->json(['message' => 'File reverted']);
+    }
 }
