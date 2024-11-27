@@ -2,8 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Course;
+use App\Models\CourseUser;
 use App\Models\Position;
 use App\Models\PositionUser;
+use App\Models\Requirement;
+use App\Models\Subject;
+use App\Models\SubjectUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -43,6 +48,18 @@ class UserFactory extends Factory
                 'user_id' => $user->id,
                 'position_id' => Position::inRandomOrder()->first()->id,
             ]);
+
+            CourseUser::create([
+                'user_id' => $user->id,
+                'course_id' => Course::inRandomOrder()->first()->id,
+            ]);
+
+            SubjectUser::create([
+                'user_id' => $user->id,
+                'subject_id' => Subject::inRandomOrder()->first()->id,
+            ]);
+
+            $requirement = Requirement::with(['course', 'subject', 'position'])->get();
 
             $user->assignRole('user');
         });

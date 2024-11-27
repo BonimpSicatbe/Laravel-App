@@ -1,7 +1,7 @@
 <x-app-layout>
-{{--    @section('head')--}}
-        <link rel="stylesheet" href="{{ asset('css/requirements/index.css') }}">
-{{--    @endsection--}}
+    {{--    @section('head')--}}
+    <link rel="stylesheet" href="{{ asset('css/requirements/index.css') }}">
+    {{--    @endsection--}}
 
     <x-app-header>Requirement List</x-app-header>
     <x-container-section>
@@ -25,6 +25,8 @@
         </div>
 
         {{-- requirements table --}}
-        @include('admin.requirements.partials.requirement-table-lists')
+{{--        <div class="overflow-x-auto">--}}
+            @include('admin.requirements.partials.requirement-table-lists')
+{{--        </div>--}}
     </x-container-section>
 </x-app-layout>

@@ -1,4 +1,4 @@
-<div class="h-screen">
+<div class="h-screen" id="sidebar">
     <div class="flex flex-col w-[275px] bg-white h-full border-r">
         <div class="flex items-center justify-start gap-4 h-14 border-b text-3xl font-bold text-black px-5">
             iTrack
@@ -40,6 +40,8 @@
                                 slotLabel="Recent"/>
                 </div>
 
+
+
                 <div>
                     <li class="px-5">
                         <div class="flex flex-row items-center h-8">
@@ -53,13 +55,14 @@
                     <x-nav-link href="" :active="request()->is('settings*')"
                                 iconClass="fa-gear" slotLabel="Settings"/>
 
+                    {{--
                     @guest
                         <x-nav-link href="{{ route('login') }}" :active="request()->is('login')"
                                     iconClass="fa-right-to-bracket" slotLabel="Login"/>
                         <x-nav-link href="{{ route('register') }}" :active="request()->is('register')"
                                     iconClass="fa-user-plus" slotLabel="Register"/>
                     @endguest
-
+                    --}}
                     @auth
                         <form action="/logout" method="post">
                             @csrf
@@ -73,3 +76,10 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+    })
+</script>

@@ -8,7 +8,7 @@
         <div class="overflow-y-auto overflow-x-hidden flex-grow">
             <ul class="flex flex-col justify-between h-full py-4 space-y-1">
                 <div class="overflow-y-auto grow">
-                    @if(Auth::user()->hasRole('Admin'))
+                    @if(Auth::user()->hasAnyRole('role:admin,super-admin'))
                         {{--menu--}}
                         <li class="px-5">
                             <div class="flex flex-row items-center h-8">

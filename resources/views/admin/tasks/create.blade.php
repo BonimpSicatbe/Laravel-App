@@ -72,6 +72,16 @@
         @include('admin.tasks.partials.task-table-lists')
     </x-container-section>
 
+    {{--assigned users lists--}}
+    <x-container-section>
+        <div class="flex flex-row items-center gap-4">
+            <div class="text-lg font-bold grow">Assigned Users Lists</div>
+            <div class="text-md">Total: <strong>{{ $requirement->users->count() }} Users</strong></div>
+        </div>
+
+        @include('admin.tasks.partials.task-assigned-users-table-lists')
+    </x-container-section>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const inputElement = document.querySelector('input[id="attachments"]');

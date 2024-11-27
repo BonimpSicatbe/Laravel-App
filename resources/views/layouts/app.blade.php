@@ -32,7 +32,7 @@
     <main>
         <div class="flex flex-row absolute w-full h-full">
             {{--sidebar--}}
-            @if(Auth::user()->hasRole('role:admin|super-admin'))
+            @if(Auth::user()->hasAnyRole('role:admin|super-admin'))
                 <div class="flex flex-col relative w-fit">@include('admin.layouts.navigation')</div>
             @else
                 <div class="flex flex-col relative w-fit">@include('user.layouts.navigation')</div>
@@ -47,7 +47,6 @@
                         </div>
                     </header>
                 @endisset
-
 
                 <div class="overflow-y-auto h-full pb-4 space-y-4">
                     @if (session('success'))

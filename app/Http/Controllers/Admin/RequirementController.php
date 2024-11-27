@@ -94,8 +94,8 @@ class RequirementController extends Controller
             'due_date' => $validatedData['due_date'],
             'created_by' => $user->id,
             'updated_by' => $user->id,
-            'sent_to_type' => $sentToType,  // Saving the group type
-            'sent_to_id' => $sentToId,      // Saving the corresponding ID
+            'sent_to_type' => $sentToType,
+            'sent_to_id' => $sentToId,
         ]);
 
         // Step 3: Assign users to the Requirement based on the selected group
@@ -125,24 +125,32 @@ class RequirementController extends Controller
                 break;
         }
 
-        // Step 4: Attach users to the requirement (many-to-many relationship)
+        // Step 4: Exclude admin and super-admin users using Spatie Permissions
+        $excludedRoles = ['admin', 'super-admin'];
+        $users = User::whereIn('id', $users)
+            ->whereDoesntHave('roles', function ($query) use ($excludedRoles) {
+                $query->whereIn('name', $excludedRoles);
+            })
+            ->pluck('id');
+
+        // Step 5: Attach users to the requirement (many-to-many relationship)
         if ($users->isNotEmpty()) {
             $requirement->users()->attach($users->toArray());
 
-            // Step 5: Notify each assigned user about the new requirement
+            // Step 6: Notify each assigned user about the new requirement
             foreach ($users as $userId) {
                 $user = User::find($userId);
                 $user->notify(new RequirementAssignedNotification($requirement));
             }
         }
 
-
-
-        // Step 6: Redirect to the Task Creation page with the newly created requirement ID
+        // Step 7: Redirect to the Task Creation page with the newly created requirement ID
         Log::info('Requirement created successfully.');
         return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
             ->with('success', 'Requirement created successfully and users assigned!');
     }
+
+
 
 
     /**

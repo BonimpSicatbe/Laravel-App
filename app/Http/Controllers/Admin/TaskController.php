@@ -35,6 +35,8 @@ class TaskController extends Controller
      */
     public function create(Request $request)
     {
+        $assigned_users = Requirement::with(['tasks.users'])
+            ->find($request->requirement);
         $requirement = Requirement::with(['tasks.users', 'tasks.createdBy'])
             ->find($request->requirement);
 
@@ -46,7 +48,8 @@ class TaskController extends Controller
 
         return view('admin.tasks.create', compact(
             'requirement',
-            'tasks'
+            'tasks',
+            'assigned_users',
         ));
     }
 
