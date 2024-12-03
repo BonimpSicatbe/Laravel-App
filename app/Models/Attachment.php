@@ -11,13 +11,17 @@ class Attachment extends Model
     protected $table = 'attachments';
 
     protected $fillable = [
-        'name',
+        'file_name',
         'size',
         'type',
         'file_path',
         'requirement_id',
         'task_id',
         'user_id',
+        'created_at',
+        'updated_at',
+        'created_by',
+        'updated_by',
     ];
 
     public function task()

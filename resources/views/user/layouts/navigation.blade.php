@@ -13,15 +13,15 @@
                             <div class="text-sm font-light tracking-wide text-gray-500">Menu</div>
                         </div>
                     </li>
-                    <x-nav-link href="{{ route('user.dashboard.index') }}" :active="request()->is('dashboard*')"
+                    <x-nav-link href="{{ route('user.dashboard.index') }}" :active="request()->is('user/dashboard*')"
                                 iconClass="fa-home" slotLabel="Dashboard"/>
-                    <x-nav-link href="{{ route('user.portfolios.index') }}" :active="request()->is('portfolios*')"
+                    <x-nav-link href="{{ route('user.portfolios.index') }}" :active="request()->is('user/portfolios*')"
                                 iconClass="fa-table-columns" slotLabel="Portfolio"/>
-                    <x-nav-link href="{{ route('user.files.index') }}" :active="request()->is('files*')"
+                    <x-nav-link href="{{ route('user.files.index') }}" :active="request()->is('user/files*')"
                                 iconClass="fa-folder-open" slotLabel="Files"/>
-                    <x-nav-link href="" :active="request()->is('archive*')" iconClass="fa-archive"
+                    <x-nav-link href="" :active="request()->is('user/archive*')" iconClass="fa-archive"
                                 slotLabel="Archive"/>
-                    <x-nav-link href="{{ route('user.notifications.index') }}" :active="request()->is('notifications*')"
+                    <x-nav-link href="{{ route('user.notifications.index') }}" :active="request()->is('user/notifications*')"
                                 iconClass="fa-bell" slotLabel="Notifications"/>
 
                     {{--tasks--}}
@@ -30,13 +30,13 @@
                             <div class="text-sm font-light tracking-wide text-gray-500">Tasks</div>
                         </div>
                     </li>
-                    <x-nav-link href="{{ route('user.requirements.index') }}" :active="request()->is('requirements*')"
+                    <x-nav-link href="{{ route('user.requirements.index') }}" :active="request()->is('user/requirements*')"
                                 iconClass="fa-tasks" slotLabel="Requirements"/>
-                    <x-nav-link href="{{ route('user.tasks.index') }}" :active="request()->is('tasks*')"
+                    <x-nav-link href="{{ route('user.tasks.index') }}" :active="request()->is('user/tasks*')"
                                 iconClass="fa-clipboard-list" slotLabel="Tasks"/>
-                    <x-nav-link href="" :active="request()->is('progress*')" iconClass="fa-spinner"
+                    <x-nav-link href="" :active="request()->is('user/progress*')" iconClass="fa-spinner"
                                 slotLabel="Progress"/>
-                    <x-nav-link href="" :active="request()->is('recent*')" iconClass="fa-clock-rotate-left"
+                    <x-nav-link href="" :active="request()->is('user/recent*')" iconClass="fa-clock-rotate-left"
                                 slotLabel="Recent"/>
                 </div>
 
@@ -49,17 +49,17 @@
                         </div>
                     </li>
 
-                    <x-nav-link href="{{ route('profile.edit') }}" :active="request()->is('profile*')"
+                    <x-nav-link href="{{ route('profile.edit') }}" :active="request()->is('user/profile*')"
                                 iconClass="fa-user" slotLabel="Profile"/>
 
-                    <x-nav-link href="" :active="request()->is('settings*')"
+                    <x-nav-link href="" :active="request()->is('user/settings*')"
                                 iconClass="fa-gear" slotLabel="Settings"/>
 
                     {{--
                     @guest
-                        <x-nav-link href="{{ route('login') }}" :active="request()->is('login')"
+                        <x-nav-link href="{{ route('login') }}" :active="request()->is('user/login')"
                                     iconClass="fa-right-to-bracket" slotLabel="Login"/>
-                        <x-nav-link href="{{ route('register') }}" :active="request()->is('register')"
+                        <x-nav-link href="{{ route('register') }}" :active="request()->is('user/register')"
                                     iconClass="fa-user-plus" slotLabel="Register"/>
                     @endguest
                     --}}

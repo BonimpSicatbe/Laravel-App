@@ -16,8 +16,10 @@
             <x-text-input class="" placeholder="Search..."/>
 
             {{--add new file--}}
-            <a href="{{ route('user.requirements.create') }}" class="btn btn-md btn-outline btn-success">Create
-                Requirement</a>
+            @if($user->hasAnyRole('role:admin,super-admin'))
+                <a href="{{ route('user.requirements.create') }}" class="btn btn-md btn-outline btn-success">Create
+                    Requirement</a>
+            @endif
         </div>
 
         {{-- requirements table --}}

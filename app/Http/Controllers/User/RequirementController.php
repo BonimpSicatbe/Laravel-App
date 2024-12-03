@@ -19,6 +19,7 @@ class RequirementController extends Controller
         $requirements = $user->requirements()->get();
 
         return view('user.requirements.index', compact(
+            'user',
             'requirements',
         ));
     }

@@ -56,7 +56,7 @@
             {{--file uploads--}}
             <div>
                 <x-input-label for="attachments" :value="__('Upload Attachments')"/>
-                <input type="file" id="attachments" name="attachments" multiple/>
+                <input type="file" id="attachments" name="attachments[]" multiple/>
             </div>
 
             <div class="flex justify-end items-center gap-2">
@@ -88,10 +88,12 @@
 
             const pond = FilePond.create(inputElement);
 
+            pond.getFiles();
+
             FilePond.setOptions({
                 server: {
-                    process: '{{ route('admin.file.upload') }}',
-                    revert: '{{ route('admin.file.revert') }}',
+                    process: '{{ route('tmp_upload') }}',
+                    revert: '{{ route('tmp_revert') }}',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },

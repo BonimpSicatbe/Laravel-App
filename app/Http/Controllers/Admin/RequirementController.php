@@ -95,7 +95,7 @@ class RequirementController extends Controller
             'created_by' => $user->id,
             'updated_by' => $user->id,
             'sent_to_type' => $sentToType,
-            'sent_to_id' => $sentToId,
+            'sent_to' => $sentToId,
         ]);
 
         // Step 3: Assign users to the Requirement based on the selected group

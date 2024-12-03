@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardController as Admin_DashboardController;
 use App\Http\Controllers\Admin\PermissionController as Admin_PermissionController;
 use App\Http\Controllers\Admin\UploadController as Admin_UploadController;
 
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\User\DashboardController as User_DashboardController;
 use App\Http\Controllers\User\PortfolioController as User_PortfolioController;
 use App\Http\Controllers\User\FileController as User_FileController;
@@ -37,6 +38,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::post('/tmp/upload', [UploadController::class, 'upload'])->name('tmp_upload');
+Route::delete('/tmp/revert', [UploadController::class, 'revert'])->name('tmp_revert');
+Route::get('/tmp/restore', [UploadController::class, 'restore'])->name('tmp_restore');
+Route::get('/tmp/load', [UploadController::class, 'load'])->name('tmp_load');
 
 Route::group(['middleware' => ['auth']], function () {
 
@@ -84,8 +90,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('files', Admin_FileController::class);
 
         // ===== FILEPOND =====
-        Route::post('/file_upload', [Admin_UploadController::class, 'upload'])->name('file.upload');
-        Route::delete('/file_revert', [Admin_UploadController::class, 'revert'])->name('file.revert');
+        Route::post('/file_upload', [UploadController::class, 'upload'])->name('file.upload');
+        Route::delete('/file_revert', [UploadController::class, 'revert'])->name('file.revert');
     });
 
     // ===== USER =====

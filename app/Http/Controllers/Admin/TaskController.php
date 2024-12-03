@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Storage;
 
 class TaskController extends Controller
@@ -46,6 +47,7 @@ class TaskController extends Controller
             return back()->with('error', 'Requirement not found.');
         }
 
+
         return view('admin.tasks.create', compact(
             'requirement',
             'tasks',
@@ -58,64 +60,126 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate the request
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'priority' => 'required|in:low,medium,high',
+            'due_date' => 'required|date',
+            'requirement_id' => 'required|exists:requirements,id',
+//            'attachments' => 'nullable|array', // List of temporary folder IDs
+        ]);
+
+        $attachments = $request->attachments;
+//        dd($attachments);
+
+        // Create the task
+        $task = Task::create([
+            'name' => $validatedData['name'],
+            'description' => $validatedData['description'] ?? null,
+            'priority' => $validatedData['priority'],
+            'due_date' => $validatedData['due_date'],
+            'requirement_id' => $validatedData['requirement_id'],
+            'created_by' => Auth::id(),
+            'updated_by' => Auth::id(),
+        ]);
+
+        if ($attachments) {
+            $file_path = "uploads/tasks/attachments/{$task->id}";
+
+            foreach ($attachments as $attachment) {
+                $file_name = $attachment->getClientOriginalName();
+                $size = $attachment->getSize();
+                $type = $attachment->getMimeType();
+                $attachment->storeAs($file_path, $file_name);
+
+                Attachment::create([
+                    'file_name' => $file_name,
+                    'size' => $size,
+                    'type' => $type,
+                    'file_path' => $file_path . $file_name,
+                    'task_id' => $task->id,
+                    'requirement_id' => $validatedData['requirement_id'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                    'created_by' => Auth::id(),
+                    'updated_by' => Auth::id(),
+                ]);
+            }
+
+        }
+
+        return redirect()->route('admin.requirements.show', $validatedData['requirement_id'])
+            ->with('success', 'Task created successfully with attachments.');
+    }
+
+    /*
+    public function store(Request $request)
+    {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'required|in:low,medium,high',
             'due_date' => 'required|date',
             'requirement_id' => 'required|exists:requirements,id',
-            'uploadTaskAttachment' => 'nullable|string', // Temporary folder name
+//        'attachments.*' => 'file|max:2048', // Adjust max file size as needed
         ]);
 
         // Create the task
         $task = Task::create([
-            'name' => $request['name'],
-            'description' => $request['description'],
-            'priority' => $request['priority'],
-            'due_date' => $request['due_date'],
-            'requirement_id' => $request['requirement_id'],
+            'name' => $request->name,
+            'description' => $request->description,
+            'priority' => $request->priority,
+            'due_date' => $request->due_date,
+            'requirement_id' => $request->requirement_id,
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         ]);
 
-        $temporaryFile = TemporaryFile::where('folder', $request->attachment)->first();
-        if ($temporaryFile) {
-            $task->addMedia(storage_path('attachment/tmp/' . $request->avatar . '/' . $temporaryFile->filename))
-                ->toMediaCollection('attachments');
-            rmdir(storage_path('attachments/tmp/' . $request->attachment));
-            $temporaryFile->delete();
-        }
+        // Check if files exist and process them
+        if ($request->has('attachments') && $request->file('attachments')) {
+            $attachments = $request->file('attachments');
 
-        // Process attachments if uploaded
-        if ($request->attachment) {
-            $temporaryFile = TemporaryFile::where('folder', $request->attachment)->first();
-            if ($temporaryFile) {
-                $finalPath = 'tasks_attachments/' . $task->id;
-                $filePath = $finalPath . '/' . $temporaryFile->filename;
+            $finalPath = "uploads/tasks/{$task->id}/attachments/";
 
-                // Move the file to the final directory
-                Storage::move('attachments/tmp/' . $temporaryFile->folder . '/' . $temporaryFile->filename, $filePath);
+            // Ensure attachments is an array
+            if (is_array($attachments)) {
+                foreach ($attachments as $attachment) {
+                    $fileName = $attachment->getClientOriginalName();
+                    $temporaryFile = TemporaryFile::where('filename', $fileName)->first();
 
-                // Save the attachment record
-                Attachment::create([
-                    'task_id' => $task->id,
-                    'file_name' => $temporaryFile->filename,
-                    'file_path' => $filePath,
-                    'requirement_id' => $request['requirement_id'],
-                ]);
+                    if ($temporaryFile) {
+                        $folder = "uploads/tmp/{$temporaryFile->folder}/";
+                        $finalFilePath = "{$finalPath}{$temporaryFile->filename}";
 
-                // Remove the temporary record
-                TemporaryFile::where('folder', $request->attachment)->delete();
+                        // Move the file to its final destination
+                        Storage::disk('local')->move("{$folder}{$temporaryFile->filename}", $finalFilePath);
 
-                // Delete the temporary folder
-                Storage::deleteDirectory('attachments/tmp/' . $temporaryFile->folder);
+                        // Save file metadata
+                        Attachment::create([
+                            'file_name' => $temporaryFile->filename,
+                            'size' => $attachment->getSize(),
+                            'type' => $attachment->getMimeType(),
+                            'file_path' => $finalFilePath,
+                            'task_id' => $task->id,
+                            'requirement_id' => $task->requirement_id,
+                            'created_by' => Auth::id(),
+                            'updated_by' => Auth::id(),
+                        ]);
+
+                        // Cleanup temporary files
+                        Storage::disk('local')->deleteDirectory($folder);
+                        $temporaryFile->delete();
+                    }
+                }
             }
         }
 
-        return redirect()->route('admin.requirements.show', $request->requirement_id)
-            ->with('success', 'Task created successfully with attachments.');
-    }
+        dd('File not found.');
 
+        return redirect()->route('admin.tasks.show', $task->id)->with('success', 'Task and attachments saved successfully!');
+    }
+    */
 
     /**
      * Display the specified resource.

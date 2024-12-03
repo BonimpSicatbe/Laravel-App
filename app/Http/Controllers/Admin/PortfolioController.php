@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePortfolioRequest;
 use App\Http\Requests\UpdatePortfolioRequest;
+use App\Models\File;
 use App\Models\Portfolio;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,8 +17,10 @@ class PortfolioController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $files = $user->files;
-        return view('portfolios.index', compact(
+        $files = File::with(['task', 'user', 'requirement'])->get();
+
+        return view('admin.portfolios.index', compact(
+            'user',
             'files',
         ));
     }

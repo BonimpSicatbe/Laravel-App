@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="{{ asset('font-awesome-6-pro-main/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('filepond-master/dist/filepond.min.css') }}">
 
-    @yield('head')
     <style>
         .fade-out {
             opacity: 0;
