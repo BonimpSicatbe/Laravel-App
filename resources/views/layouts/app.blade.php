@@ -31,7 +31,7 @@
     <main>
         <div class="flex flex-row absolute w-full h-full">
             {{--sidebar--}}
-            @if(Auth::user()->hasAnyRole('role:admin|super-admin'))
+            @if(Auth::user()->hasAnyRole('admin|super-admin'))
                 <div class="flex flex-col relative w-fit">@include('admin.layouts.navigation')</div>
             @else
                 <div class="flex flex-col relative w-fit">@include('user.layouts.navigation')</div>

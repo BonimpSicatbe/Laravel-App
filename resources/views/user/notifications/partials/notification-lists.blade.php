@@ -31,20 +31,20 @@
                 {{-- top row: title and unread status --}}
                 <div class="flex flex-row justify-between items-center">
                     <div class="text-lg font-bold truncate">
-                        {{ $notification->data['name'] ?? 'Notification' }}
+                        {{ $notification->title ?? 'Notification Title Not  Found.' }}
                     </div>
-                    @if(is_null($notification->read_at))
-                        <span class="badge badge-success badge-xs">New</span>
+                    @if(is_null($notification->pivot->read_at))
+                        <span class="badge badge-success badge-xs"></span>
                     @endif
                 </div>
 
                 {{-- bottom row: message and timestamp --}}
                 <div class="flex flex-row gap-3">
                     <div class="text-sm grow truncate">
-                        {{ $notification->data['description'] ?? 'No additional details.' }}
+                        {{ $notification->message ?? 'No additional details.' }}
                     </div>
                     <div class="text-sm text-gray-500 text-nowrap">
-                        {{ $notification->created_at->format('g:i A') }}
+                        {{ $notification->created_at->diffForHumans() }}
                     </div>
                 </div>
             </div>

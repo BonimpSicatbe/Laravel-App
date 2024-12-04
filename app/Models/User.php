@@ -9,13 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, HasRoles, Notifiable;
+    use HasFactory, HasRoles;
 
     protected $fillable = [
         'account_number',
@@ -97,6 +96,14 @@ class User extends Authenticatable
             'subject_id',
         );
     }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, 'user_has_notifications')
+            ->withPivot('read_at') // Include the 'read_at' column from the pivot table
+            ->withTimestamps();
+    }
+
     // ====================
 
 }

@@ -19,13 +19,8 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        $tasks = Task::where('status', ['pending', 'in_progress'])
-            ->get();
-
-        $notifications = Notification::where('notifiable_type', User::class)
-            ->where('notifiable_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $notifications = $user->notifications;
+        $tasks = $user->tasks;
 
         return view('user.dashboard.index', compact([
             'notifications',

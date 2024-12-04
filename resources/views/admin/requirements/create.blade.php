@@ -48,38 +48,46 @@
                 </x-select-input>
             </div>
 
-            {{-- Select Course --}}
-            <div id="select_course_section" class="hidden">
-                <x-input-label for="selected_course" :value="__('Select Course:')"></x-input-label>
-                <x-select-input name="selected_course" id="select_course" class="capitalize">
-                    <option value="" selected>Select Course</option>
-                    @foreach($courses as $course)
-                        <option value="{{ $course->id }}" class="capitalize">{{ $course->name }}</option>
-                    @endforeach
+            {{-- Select Target --}}
+            <div id="select_target_section" class="hidden">
+                <x-input-label for="selected_target" :value="__('Select Target:')"></x-input-label>
+                <x-select-input name="selected_target" id="select_target" class="capitalize">
+                    <option value="" selected>Select Target</option>
                 </x-select-input>
             </div>
 
-            {{-- Select Subject --}}
-            <div id="select_subject_section" class="hidden">
-                <x-input-label for="selected_subject" :value="__('Select Subject:')"></x-input-label>
-                <x-select-input name="selected_subject" id="select_subject" class="capitalize">
-                    <option value="" selected>Select Subject</option>
-                    @foreach($subjects as $subject)
-                        <option value="{{ $subject->id }}" class="capitalize">{{ $subject->name }}</option>
-                    @endforeach
-                </x-select-input>
-            </div>
+            {{--            --}}{{-- Select Course --}}
+            {{--            <div id="select_course_section" class="hidden">--}}
+            {{--                <x-input-label for="selected_course" :value="__('Select Course:')"></x-input-label>--}}
+            {{--                <x-select-input name="selected_course" id="select_course" class="capitalize">--}}
+            {{--                    <option value="" selected>Select Course</option>--}}
+            {{--                    @foreach($courses as $course)--}}
+            {{--                        <option value="{{ $course->id }}" class="capitalize">{{ $course->name }}</option>--}}
+            {{--                    @endforeach--}}
+            {{--                </x-select-input>--}}
+            {{--            </div>--}}
 
-            {{-- Select Position --}}
-            <div id="select_position_section" class="hidden">
-                <x-input-label for="selected_position" :value="__('Select Position:')"></x-input-label>
-                <x-select-input name="selected_position" id="select_position" class="capitalize">
-                    <option value="" selected>Select Position</option>
-                    @foreach($positions as $position)
-                        <option value="{{ $position->id }}" class="capitalize">{{ $position->name }}</option>
-                    @endforeach
-                </x-select-input>
-            </div>
+            {{--            --}}{{-- Select Subject --}}
+            {{--            <div id="select_subject_section" class="hidden">--}}
+            {{--                <x-input-label for="selected_subject" :value="__('Select Subject:')"></x-input-label>--}}
+            {{--                <x-select-input name="selected_subject" id="select_subject" class="capitalize">--}}
+            {{--                    <option value="" selected>Select Subject</option>--}}
+            {{--                    @foreach($subjects as $subject)--}}
+            {{--                        <option value="{{ $subject->id }}" class="capitalize">{{ $subject->name }}</option>--}}
+            {{--                    @endforeach--}}
+            {{--                </x-select-input>--}}
+            {{--            </div>--}}
+
+            {{--            --}}{{-- Select Position --}}
+            {{--            <div id="select_position_section" class="hidden">--}}
+            {{--                <x-input-label for="selected_position" :value="__('Select Position:')"></x-input-label>--}}
+            {{--                <x-select-input name="selected_position" id="select_position" class="capitalize">--}}
+            {{--                    <option value="" selected>Select Position</option>--}}
+            {{--                    @foreach($positions as $position)--}}
+            {{--                        <option value="{{ $position->id }}" class="capitalize">{{ $position->name }}</option>--}}
+            {{--                    @endforeach--}}
+            {{--                </x-select-input>--}}
+            {{--            </div>--}}
 
             <div class="flex justify-end items-center gap-2">
                 <a href="{{ route('admin.requirements.index') }}" class="btn btn-sm btn-error text-white">Cancel</a>
@@ -91,28 +99,35 @@
     <script>
         function showSelectGroup() {
             const selectGroup = document.getElementById('select_group').value;
-            const courseSection = document.getElementById('select_course_section');
-            const subjectSection = document.getElementById('select_subject_section');
-            const positionSection = document.getElementById('select_position_section');
+            const targetSection = document.getElementById('select_target_section');
+            const targetDropdown = document.getElementById('select_target');
 
-            // Hide all sections initially
-            courseSection.classList.add('hidden');
-            subjectSection.classList.add('hidden');
-            positionSection.classList.add('hidden');
+            // Reset dropdown and hide section initially
+            targetDropdown.innerHTML = '<option value="" selected>Select Target</option>';
+            targetSection.classList.add('hidden');
 
-            // Show the selected section
-            switch (selectGroup) {
-                case 'course':
-                    courseSection.classList.remove('hidden');
-                    break;
-                case 'subject':
-                    subjectSection.classList.remove('hidden');
-                    break;
-                case 'position':
-                    positionSection.classList.remove('hidden');
-                    break;
+            // Fetch the appropriate options dynamically
+            let options = [];
+            if (selectGroup === 'course') {
+                options = @json($courses);
+            } else if (selectGroup === 'subject') {
+                options = @json($subjects);
+            } else if (selectGroup === 'position') {
+                options = @json($positions);
+            }
+
+            // Populate dropdown if options are available
+            if (options.length > 0) {
+                options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.id;
+                    opt.textContent = option.name;
+                    targetDropdown.appendChild(opt);
+                });
+                targetSection.classList.remove('hidden');
             }
         }
+
     </script>
 
 </x-app-layout>

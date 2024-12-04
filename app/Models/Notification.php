@@ -2,39 +2,25 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Facades\Auth;
-use PhpParser\Builder\Class_;
-use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
-use Znck\Eloquent\Relations\BelongsToThrough;
 
 class Notification extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'type',
-        'title',
-        'message',
-        'read',
-        'read_at',
-        'action_url',
-        'user_id',
-        'sender_id',
-    ];
+    protected $fillable = ['title', 'message', 'sent_to', 'created_by', 'updated_by'];
 
-    public function user(): BelongsTo
+    public function users()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'user_has_notifications')
+            ->withPivot('read_at') // Include the 'read_at' column from the pivot table
+            ->withTimestamps();
     }
 
-    public function sender(): BelongsTo
+    public function createdBy()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
+
 }

@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
         $userRole = Role::create(['name' => 'user']); // Renamed this variable to avoid conflict
 
         // Create admin user and assign super-admin role
-        $adminUser = User::create([
+        $superAdminUser = User::create([
             'account_number' => '202104361',
             'name' => 'Doming Ricalde',
             'email' => 'domingricalde@gmail.com',
@@ -45,12 +45,26 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $adminUser->assignRole('super-admin'); // Assign the super-admin role to the admin user
+        $adminUser = User::create([
+            'account_number' => '202104361',
+            'name' => 'Bonimp Sicatbe',
+            'email' => 'bonimpsicatbe@gmail.com',
+            'password' => bcrypt('bonimpsicatbe'),
+            'email_verified_at' => now(),
+        ]);
+
+        $superAdminUser->assignRole('super-admin'); // Assign the super-admin role to the admin user
+        $adminUser->assignRole('admin');
 
         // Create a position for the admin user
         PositionUser::create([
+            'user_id' => $superAdminUser->id, // Use the actual ID of the created admin user
+            'position_id' => 1, // Dean
+        ]);
+
+        PositionUser::create([
             'user_id' => $adminUser->id, // Use the actual ID of the created admin user
-            'position_id' => 1,
+            'position_id' => 1, // Dean
         ]);
 
         // Create a regular user and assign user role

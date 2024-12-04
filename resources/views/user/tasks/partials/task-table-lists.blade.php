@@ -23,7 +23,7 @@
             @foreach($tasks as $task)
                 <tr>
                     <td class="truncate hover:animate-marquee hover:link"><a
-                            href="{{ route('tasks.show', $task->id) }}">{{ $task->name }}</a></td>
+                            href="{{ route('user.tasks.show', $task->id) }}">{{ $task->name }}</a></td>
                     {{--<td>{{ $task->Description }}</td>--}}
                     <td class="truncate capitalize ">{{ $task->status }}</td>
                     <td class="truncate capitalize ">{{ $task->priority }}</td>
@@ -34,16 +34,16 @@
                     <td class="truncate capitalize text-nowrap">{{ $task->createdBy->name }}</td>
                     <td class="flex flex-row items-center gap-2">
                         {{-- view task --}}
-                        <a href="{{ route('tasks.show', $task->id) }}"
+                        <a href="{{ route('user.tasks.show', $task->id) }}"
                            class="text-green-500 hover:text-green-700 transition-all "><i
                                 class=" fa-regular fa-eye"></i></a>
 
                         {{-- edit task --}}
-                        <a href="{{ route('tasks.edit', $task->id) }}"
+                        <a href="{{ route('user.tasks.edit', $task->id) }}"
                            class="text-blue-500 hover:text-blue-700 transition-all "><i class=" fa-regular fa-edit"></i></a>
 
                         {{-- delete task --}}
-                        <form method="POST" action="{{ route('tasks.destroy', $task->id) }}">
+                        <form method="POST" action="{{ route('user.tasks.destroy', $task->id) }}">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700 transition-all "><i

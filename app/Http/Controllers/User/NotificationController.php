@@ -4,8 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Models\UserHasNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,11 +15,6 @@ class NotificationController extends Controller
      */
     public function index()
     {
-//        $notifications = Notification::where('notifiable_type', User::class)
-//            ->where('notifiable_id', Auth::id())
-//            ->orderBy('created_at', 'desc')
-//            ->get();
-
         $notifications = Auth::user()->notifications;
 
         return view('user.notifications.index', compact('notifications'));
@@ -47,25 +41,25 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
-        if ($notification->notifiable_id !== Auth::id()) {
+        $user = Auth::user();
+
+        // Check if the user has the notification in the pivot table
+        $userNotification = $user->notifications()->where('notifications.id', $notification->id)->first();
+
+        if (!$userNotification) {
             abort(403, 'Unauthorized action.');
         }
 
-//         Get the authenticated user's notifications with potential eager loading if needed
-        $notifications = Auth::user()->notifications;
-//
-        $notification = Auth::user()->notifications()->where('id', $notification->id)->firstOrFail();
+        // If the notification is unread, update the 'read_at' field to the current timestamp
+        $userNotification->pivot->update(['read_at' => now()]);
 
-        if (is_null($notification->read_at)) {
-            $notification->markAsRead();
-        }
+        // Get all notifications of the authenticated user for display
+        $notifications = $user->notifications;
 
-//        dd($notification);
-        return view('user.notifications.show', compact(
-            'notification',
-            'notifications',
-        ));
+
+        return view('user.notifications.show', compact('notification', 'notifications'));
     }
+
 
     /**
      * Show the form for editing the specified resource.

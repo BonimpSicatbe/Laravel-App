@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +18,13 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $courses = User::with('courses')->get();
+        $subjects = User::with('subjects')->get();
+        $position = User::with('position')->get();
+
         return view('profile.edit', [
             'user' => $request->user(),
-        ]);
+        ], compact('courses', 'subjects', 'position'));
     }
 
     /**

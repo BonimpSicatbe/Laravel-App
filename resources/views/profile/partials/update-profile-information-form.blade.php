@@ -1,5 +1,6 @@
-<section>
-    <header>
+<section class="space-y-2">
+    <header class="space-y-2">
+        <div class="">
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Profile Information') }}
         </h2>
@@ -7,26 +8,56 @@
         <p class="mt-1 text-sm text-gray-600">
             {{ __("Update your account's profile information and email address.") }}
         </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="">
+                <div class="text-sm text-gray-600">Subjects</div>
+                <div class="overflow-y-auto max-h-[150px] border border-gray-300 rounded-lg p-3">
+                    @if($user->subjects->isEmpty())
+                        <div class="text-md">There are no course listed.</div>
+                    @else
+                        @foreach($user->subjects as $course)
+                            <div class="text-md p2">{{ $course }}</div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+
+            <div class="">
+                <div class="text-sm text-gray-600">Courses</div>
+                <div class="overflow-y-auto max-h-[150px] border border-gray-300 rounded-lg p-3">
+                    @if($user->courses->isEmpty())
+                        <div class="text-md">There are no course listed.</div>
+                    @else
+                        @foreach($user->courses as $course)
+                            <div class="text-md p-2">{{ $course }}</div>
+                        @endforeach
+                    @endif
+                </div>
+            </div>
+        </div>
+
     </header>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="grid grid-cols-2 gap-4 w-full">
         @csrf
         @method('patch')
 
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <x-input-label for="name" :value="__('Name')"/>
+            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name"/>
+            <x-input-error class="mt-2" :messages="$errors->get('name')"/>
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+            <x-input-label for="email" :value="__('Email')"/>
+            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username"/>
+            <x-input-error class="mt-2" :messages="$errors->get('email')"/>
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
                 <div>
