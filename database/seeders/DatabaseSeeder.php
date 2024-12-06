@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Course;
+use App\Models\CourseUser;
 use App\Models\File;
 use App\Models\Folder;
 use App\Models\Notification;
@@ -45,6 +47,12 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
+        $superAdminUser->assignRole('super-admin'); // Assign the super-admin role to the admin user
+
+        PositionUser::create(['user_id' => $superAdminUser->id, 'position_id' => 1]);
+        CourseUser::create(['user_id' => $superAdminUser->id, 'course_id' => 1]);
+        SubjectUser::create(['user_id' => $superAdminUser->id, 'subject_id' => 1]);
+
         $adminUser = User::create([
             'account_number' => '202104361',
             'name' => 'Bonimp Sicatbe',
@@ -53,19 +61,11 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        $superAdminUser->assignRole('super-admin'); // Assign the super-admin role to the admin user
         $adminUser->assignRole('admin');
 
-        // Create a position for the admin user
-        PositionUser::create([
-            'user_id' => $superAdminUser->id, // Use the actual ID of the created admin user
-            'position_id' => 1, // Dean
-        ]);
-
-        PositionUser::create([
-            'user_id' => $adminUser->id, // Use the actual ID of the created admin user
-            'position_id' => 1, // Dean
-        ]);
+        PositionUser::create(['user_id' => $adminUser->id, 'position_id' => 1]);
+        CourseUser::create(['user_id' => $adminUser->id, 'course_id' => 1]);
+        SubjectUser::create(['user_id' => $adminUser->id, 'subject_id' => 1]);
 
         // Create a regular user and assign user role
         $regularUser = User::create([
@@ -78,11 +78,11 @@ class DatabaseSeeder extends Seeder
 
         $regularUser->assignRole('user'); // Assign the user role to the regular user
 
-        PositionUser::create([
-            'user_id' => $regularUser->id, // Use the actual ID of the created admin user
-            'position_id' => 1,
-        ]);
+        PositionUser::create(['user_id' => $regularUser->id, 'position_id' => 1]);
+        CourseUser::create(['user_id' => $regularUser->id, 'course_id' => 1]);
+        SubjectUser::create(['user_id' => $regularUser->id, 'subject_id' => 1]);
 
+        User::factory()->count(25)->create();
     }
 
 }

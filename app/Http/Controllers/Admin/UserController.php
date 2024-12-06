@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseUser;
+use App\Models\Notification;
 use App\Models\Position;
+use App\Models\PositionUser;
 use App\Models\Subject;
+use App\Models\SubjectUser;
 use App\Models\User;
+use App\Models\UserHasNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -41,13 +48,20 @@ class UserController extends Controller
         $courses = Course::all();
         $subjects = Subject::all();
         $positions = Position::all();
+        $roles = Role::all();
+
+//        dd($courses, $subjects, $positions);
+
+        $user = Auth::user();
 
         return view('admin.users.create', compact(
             'courses',
             'subjects',
-            'positions'
+            'positions',
+            'roles',
         ));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -59,7 +73,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed'],
-//            'role' => ['required', 'string', 'max:255'],
+            'role' => ['required', 'exists:roles,name'],
             'position' => ['required', 'int', 'max:255'],
             'course' => ['required', 'int', 'max:255'],
             'subject' => ['required', 'int', 'max:255'],
@@ -74,26 +88,46 @@ class UserController extends Controller
             'password' => bcrypt($request->password), // Hash the password
         ]);
 
+        // assign user role
+        $user->assignRole($request->role);
+
         // insert user and user's course into table course_user
-        DB::table('course_users')->insert([
-            'user_id' => $user->id,
-            'course_id' => $request->course
-        ]);
+        $courseUser = CourseUser::create(['user_id' => $user->id, 'course_id' => $request->course, 'created_at' => now(), 'updated_at' => now()]);
+        $subjectUser = SubjectUser::create(['user_id' => $user->id, 'subject_id' => $request->subject, 'created_at' => now(), 'updated_at' => now()]);
+        $positionUser = PositionUser::create(['user_id' => $user->id, 'position_id' => $request->position, 'created_at' => now(), 'updated_at' => now()]);
 
-        // insert user and user's subject into table subject_user
-        DB::table('subject_users')->insert([
-            'user_id' => $user->id,
-            'subject_id' => $request->course
-        ]);
+        $notifications = Notification::all();
 
-        // insert user and user's position into table position_user
-        DB::table('position_users')->insert([
-            'user_id' => $user->id,
-            'position_id' => $request->course
-        ]);
+        foreach ($notifications as $notification) {
+            if ($courseUser->course === $notification->sent_to) {
+                UserHasNotification::create([
+                    'user_id' => $user->id,
+                    'notification_id' => $notification->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
 
-//        return redirect()->route('admin.users.index')->with('success', 'User created successfully');
-        return view('admin.users.create')->with('success', 'User created successfully');
+            if ($subjectUser->course === $notification->sent_to) {
+                UserHasNotification::create([
+                    'user_id' => $user->id,
+                    'notification_id' => $notification->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            if ($positionUser->course === $notification->sent_to) {
+                UserHasNotification::create([
+                    'user_id' => $user->id,
+                    'notification_id' => $notification->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return redirect()->route('admin.users.create')->with('success', 'User created successfully and notifications has been sent.');
     }
 
     /**
@@ -104,7 +138,8 @@ class UserController extends Controller
         $courses = $user->courses;
         $subjects = $user->subjects;
 
-//        dd($courses);
+        dd($courses);
+
         return view('admin.users.show', compact(
             'user',
             'courses',

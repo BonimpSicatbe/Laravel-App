@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\CourseUser;
 use App\Models\Notification;
 use App\Models\Position;
+use App\Models\PositionUser;
 use App\Models\Requirement;
 use App\Models\RequirementUser;
 use App\Models\Subject;
+use App\Models\SubjectUser;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserHasNotification;
@@ -67,8 +70,8 @@ class RequirementController extends Controller
         ]);
 
         // Step 1: Determine 'sent_to_type' and 'sent_to_id'
-        $sentToType = $request->select_group !== 'all' ? $request->select_group : null;
-        $sentToId = $request->selected_target;
+        $sentToType = $request->select_group === 'all' ? 'all' : $request->select_group;
+        $sentToId = $request->select_group === 'all' ? null : $request->selected_target;
 
         // Step 2: Create the Requirement
         $requirement = Requirement::create([
@@ -86,18 +89,19 @@ class RequirementController extends Controller
 
         switch ($request->select_group) {
             case 'course':
-                $users = DB::table('course_users')->where('course_id', $sentToId)->pluck('user_id');
+                $users = CourseUser::where('course_id', $sentToId)->pluck('user_id');
                 break;
             case 'subject':
-                $users = DB::table('subject_users')->where('subject_id', $sentToId)->pluck('user_id');
+                $users = SubjectUser::where('subject_id', $sentToId)->pluck('user_id');
                 break;
             case 'position':
-                $users = DB::table('position_users')->where('position_id', $sentToId)->pluck('user_id');
+                $users = PositionUser::where('position_id', $sentToId)->pluck('user_id');
                 break;
             case 'all':
                 $users = User::pluck('id');
                 break;
         }
+
 
         // Step 4: Exclude admin and super-admin users
         $excludedRoles = ['admin', 'super-admin'];
@@ -107,19 +111,17 @@ class RequirementController extends Controller
             })
             ->pluck('id');
 
+        // notification
         $sentTo = null;
         switch ($sentToType) {
             case 'course':
-                $course = DB::table('course_users')->where('course_id', $sentToId)->first();
-                $sentTo = Course::where('id', $course->course_id)->first();
+                $sentTo = Course::where('id', $sentToId)->first();
                 break;
             case 'subject':
-                $subject = DB::table('subject_users')->where('subject_id', $sentToId)->first();
-                $sentTo = Subject::where('id', $subject->subject_id)->first();
+                $sentTo = Subject::where('id', $sentToId)->first();
                 break;
             case 'position':
-                $position = DB::table('position_users')->where('position_id', $sentToId)->first();
-                $sentTo = Position::where('id', $position->position_id)->first();
+                $sentTo = Position::where('id', $sentToId)->first();
                 break;
             case 'all':
                 $sentTo = 'all';
@@ -135,23 +137,13 @@ class RequirementController extends Controller
             'updated_by' => $user->id,
         ]);
 
-        // Step 6: Attach users to the requirement and notifications
-        if ($users->isNotEmpty()) {
-            // Attach users to the requirement
-            $requirement->users()->attach($users->toArray());
-
-            // Notify each user by creating UserHasNotification entries
-            $notificationData = $users->map(function ($userId) use ($notification) {
-                return [
-                    'user_id' => $userId,
-                    'notification_id' => $notification->id,
-                    'read_at' => null,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            });
-
-            UserHasNotification::insert($notificationData->toArray());
+        foreach ($users as $userId) {
+            UserHasNotification::create([
+                'notification_id' => $notification->id,
+                'user_id' => $userId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
         }
 
         // Step 7: Redirect to Task Creation page

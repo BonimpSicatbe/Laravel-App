@@ -40,7 +40,7 @@
             <div id="select_group_section" class="">
                 <x-input-label for="select_group" :value="__('Send To:')"></x-input-label>
                 <x-select-input name="select_group" id="select_group" onchange="showSelectGroup()" class="capitalize">
-                    <option value="" selected>Select Group</option>
+                    <option value="" selected disabled>Select Group</option>
                     <option value="all" class="capitalize">Select All</option>
                     <option value="course" class="capitalize">Course</option>
                     <option value="subject" class="capitalize">Subject</option>
@@ -48,46 +48,47 @@
                 </x-select-input>
             </div>
 
-            {{-- Select Target --}}
+            {{-- Select Target
             <div id="select_target_section" class="hidden">
                 <x-input-label for="selected_target" :value="__('Select Target:')"></x-input-label>
                 <x-select-input name="selected_target" id="select_target" class="capitalize">
                     <option value="" selected>Select Target</option>
                 </x-select-input>
             </div>
+            --}}
 
-            {{--            --}}{{-- Select Course --}}
-            {{--            <div id="select_course_section" class="hidden">--}}
-            {{--                <x-input-label for="selected_course" :value="__('Select Course:')"></x-input-label>--}}
-            {{--                <x-select-input name="selected_course" id="select_course" class="capitalize">--}}
-            {{--                    <option value="" selected>Select Course</option>--}}
-            {{--                    @foreach($courses as $course)--}}
-            {{--                        <option value="{{ $course->id }}" class="capitalize">{{ $course->name }}</option>--}}
-            {{--                    @endforeach--}}
-            {{--                </x-select-input>--}}
-            {{--            </div>--}}
+            {{--Select Course--}}
+            <div id="select_course_section" class="hidden">
+                <x-input-label for="selected_course" :value="__('Select Course:')"></x-input-label>
+                <x-select-input name="selected_target" id="select_course" class="capitalize" onchange="showSelectGroup()">
+                    <option value="" selected>Select Course</option>
+                    @foreach($courses as $course)
+                        <option value="{{ $course->id }}" class="capitalize">{{ $course->name }}</option>
+                    @endforeach
+                </x-select-input>
+            </div>
 
-            {{--            --}}{{-- Select Subject --}}
-            {{--            <div id="select_subject_section" class="hidden">--}}
-            {{--                <x-input-label for="selected_subject" :value="__('Select Subject:')"></x-input-label>--}}
-            {{--                <x-select-input name="selected_subject" id="select_subject" class="capitalize">--}}
-            {{--                    <option value="" selected>Select Subject</option>--}}
-            {{--                    @foreach($subjects as $subject)--}}
-            {{--                        <option value="{{ $subject->id }}" class="capitalize">{{ $subject->name }}</option>--}}
-            {{--                    @endforeach--}}
-            {{--                </x-select-input>--}}
-            {{--            </div>--}}
+            {{--Select Subject--}}
+            <div id="select_subject_section" class="hidden">
+                <x-input-label for="selected_subject" :value="__('Select Subject:')"></x-input-label>
+                <x-select-input name="selected_target" id="select_subject" class="capitalize" onchange="showSelectGroup()">
+                    <option value="" selected>Select Subject</option>
+                    @foreach($subjects as $subject)
+                        <option value="{{ $subject->id }}" class="capitalize">{{ $subject->name }}</option>
+                    @endforeach
+                </x-select-input>
+            </div>
 
-            {{--            --}}{{-- Select Position --}}
-            {{--            <div id="select_position_section" class="hidden">--}}
-            {{--                <x-input-label for="selected_position" :value="__('Select Position:')"></x-input-label>--}}
-            {{--                <x-select-input name="selected_position" id="select_position" class="capitalize">--}}
-            {{--                    <option value="" selected>Select Position</option>--}}
-            {{--                    @foreach($positions as $position)--}}
-            {{--                        <option value="{{ $position->id }}" class="capitalize">{{ $position->name }}</option>--}}
-            {{--                    @endforeach--}}
-            {{--                </x-select-input>--}}
-            {{--            </div>--}}
+            {{--Select Position--}}
+            <div id="select_position_section" class="hidden">
+                <x-input-label for="selected_position" :value="__('Select Position:')"></x-input-label>
+                <x-select-input name="selected_target" id="select_position" class="capitalize" onchange="showSelectGroup()">
+                    <option value="" selected>Select Position</option>
+                    @foreach($positions as $position)
+                        <option value="{{ $position->id }}" class="capitalize">{{ $position->name }}</option>
+                    @endforeach
+                </x-select-input>
+            </div>
 
             <div class="flex justify-end items-center gap-2">
                 <a href="{{ route('admin.requirements.index') }}" class="btn btn-sm btn-error text-white">Cancel</a>
@@ -99,32 +100,29 @@
     <script>
         function showSelectGroup() {
             const selectGroup = document.getElementById('select_group').value;
+            const select_course = document.getElementById('select_course_section');
+            const select_subject = document.getElementById('select_subject_section');
+            const select_position = document.getElementById('select_position_section');
             const targetSection = document.getElementById('select_target_section');
             const targetDropdown = document.getElementById('select_target');
 
-            // Reset dropdown and hide section initially
-            targetDropdown.innerHTML = '<option value="" selected>Select Target</option>';
-            targetSection.classList.add('hidden');
-
-            // Fetch the appropriate options dynamically
-            let options = [];
-            if (selectGroup === 'course') {
-                options = @json($courses);
+            if (selectGroup === 'all') {
+                select_course.classList.add('hidden');
+                select_subject.classList.add('hidden');
+                select_position.classList.add('hidden');
+                // document.getElementById('selected_target').value = 'all';
+            } else if (selectGroup === 'course') {
+                select_course.classList.remove('hidden');
+                select_subject.classList.add('hidden');
+                select_position.classList.add('hidden');
             } else if (selectGroup === 'subject') {
-                options = @json($subjects);
+                select_course.classList.add('hidden');
+                select_subject.classList.remove('hidden');
+                select_position.classList.add('hidden');
             } else if (selectGroup === 'position') {
-                options = @json($positions);
-            }
-
-            // Populate dropdown if options are available
-            if (options.length > 0) {
-                options.forEach(option => {
-                    const opt = document.createElement('option');
-                    opt.value = option.id;
-                    opt.textContent = option.name;
-                    targetDropdown.appendChild(opt);
-                });
-                targetSection.classList.remove('hidden');
+                select_course.classList.add('hidden');
+                select_subject.classList.add('hidden');
+                select_position.classList.remove('hidden');
             }
         }
 
