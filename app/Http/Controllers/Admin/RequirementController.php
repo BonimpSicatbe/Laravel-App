@@ -66,7 +66,7 @@ class RequirementController extends Controller
             'description' => 'required|string',
             'due_date' => 'required|date',
             'select_group' => 'required|string',  // Either 'course', 'subject', 'position', or 'all'
-            'selected_target' => 'nullable|exists:courses,id|exists:subjects,id|exists:positions,id',
+            'selected_target' => 'nullable',
         ]);
 
         // Step 1: Determine 'sent_to_type' and 'sent_to_id'
@@ -85,8 +85,8 @@ class RequirementController extends Controller
         ]);
 
         // Step 3: Fetch users based on the selected group
-        $users = collect(); // Initialize an empty collection of users
-
+        // Initialize an empty collection of users
+        $users = collect();
         switch ($request->select_group) {
             case 'course':
                 $users = CourseUser::where('course_id', $sentToId)->pluck('user_id');
@@ -102,7 +102,6 @@ class RequirementController extends Controller
                 break;
         }
 
-
         // Step 4: Exclude admin and super-admin users
         $excludedRoles = ['admin', 'super-admin'];
         $users = User::whereIn('id', $users)
@@ -111,7 +110,7 @@ class RequirementController extends Controller
             })
             ->pluck('id');
 
-        // notification
+        // get the data for sentToType
         $sentTo = null;
         switch ($sentToType) {
             case 'course':
@@ -124,7 +123,7 @@ class RequirementController extends Controller
                 $sentTo = Position::where('id', $sentToId)->first();
                 break;
             case 'all':
-                $sentTo = 'all';
+                $sentTo = 'all'; // Explicitly set as 'all'
                 break;
         }
 
@@ -132,12 +131,15 @@ class RequirementController extends Controller
         $notification = Notification::create([
             'title' => $requirement->name,
             'message' => $requirement->description,
-            'sent_to' => is_null($sentTo) ? 'All' : $sentTo->name,
+            'sent_to' => $sentTo === 'all' ? 'all' : $sentTo->name,
             'created_by' => $user->id,
             'updated_by' => $user->id,
         ]);
 
+        // assign the notification for each user
         foreach ($users as $userId) {
+            RequirementUser::create(['requirement_id' => $requirement->id, 'user_id' => $userId, 'created_at' => now(), 'updated_at' => now()]);
+
             UserHasNotification::create([
                 'notification_id' => $notification->id,
                 'user_id' => $userId,
@@ -150,6 +152,7 @@ class RequirementController extends Controller
         return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
             ->with('success', 'Requirement created successfully and users assigned!');
     }
+
 
 
     /**

@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
         CourseUser::create(['user_id' => $regularUser->id, 'course_id' => 1]);
         SubjectUser::create(['user_id' => $regularUser->id, 'subject_id' => 1]);
 
-        User::factory()->count(25)->create();
+        User::factory()->count(50)->create();
     }
 
 }

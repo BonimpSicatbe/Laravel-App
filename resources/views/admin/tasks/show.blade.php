@@ -6,18 +6,51 @@
         {{--details--}}
         @include('admin.tasks.partials.task-requirement-details')
 
-        {{--attachments--}}
-        <div class="">
-            <x-input-label class="capitalize">attachments</x-input-label>
+        {{-- Attachments --}}
+        <div>
+            <x-input-label class="capitalize">Attachments</x-input-label>
             @if($task->attachments->isEmpty())
-                <div class="text-md font-normal border border-gray-500 rounded-lg p-2">No Attachments.</div>
+                <div class="text-md font-normal border border-gray-500 rounded-lg p-2">
+                    No Attachments.
+                </div>
             @else
-                @foreach($task->attachments as $attachment)
-                    <div class="text-md font-normal border border-gray-500 rounded-lg p-2">{{ $attachment->name }}</div>
-                @endforeach
+                <ul class="">
+                    @foreach($task->attachments as $attachment)
+                        <li class="flex items-center justify-between border border-gray-500 rounded-lg p-2 mb-2">
+                    <span class="text-md font-normal">
+                        {{ $attachment->file_name }}
+                    </span>
+                            <div class="flex space-x-2">
+                                {{-- View Button --}}
+                                <a
+                                    href="{{ route('attachments.show', $attachment->id) }}"
+                                    target="_blank"
+                                    class="text-green-500 hover:underline">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
+
+                                {{-- Download Button --}}
+                                <a href="{{ route('attachments.download', $attachment->id) }}" target="_blank" class="text-blue-500 hover:underline">
+                                    <i class="fa-regular fa-download"></i>
+                                </a>
+
+                                {{-- Delete Button --}}
+                                <form
+                                    action="{{ route('attachments.destroy', $attachment->id) }}"
+                                    method="POST"
+                                    onsubmit="return confirm('Are you sure you want to delete this attachment?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:underline">
+                                        <i class="fa-regular fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
             @endif
         </div>
-
     </x-container-section>
 
     {{--uploaded files--}}
@@ -93,14 +126,14 @@
 <dialog id="uploadTaskFiles" class="modal">
     <div class="modal-box w-11/12 max-w-5xl space-y-2">
         {{--        <p class="py-4">Click the button below to close</p>--}}
-                <h3 class="text-lg font-bold">Upload Task Files</h3>
+        <h3 class="text-lg font-bold">Upload Task Files</h3>
 
         <div class="modal-action">
             <form action="{{ route('admin.tasks.store', $task->requirement) }}" class="flex flex-col gap-2 w-full">
                 <input type="file" id="attachments" name="attachments" multiple/>
 
                 <div class="text-end">
-{{--                    <a href="{{ route('admin.tasks.show', $task->id) }}" class="btn btn-sm">Close</a>--}}
+                    {{--                    <a href="{{ route('admin.tasks.show', $task->id) }}" class="btn btn-sm">Close</a>--}}
                     <button type="button" onclick="uploadTaskFiles.close()" class="btn btn-sm">Close</button>
                     <button type="submit" class="btn btn-sm btn-success text-white">Upload</button>
                 </div>

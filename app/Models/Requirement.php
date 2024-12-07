@@ -76,7 +76,6 @@ class Requirement extends Model
         return $this->belongsTo(Position::class, 'sent_to_id');
     }
 
-
     // =========================
     public function createdBy()
     {

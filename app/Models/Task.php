@@ -31,7 +31,7 @@ class Task extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
     }
 
     public function users() // 17/10/2024 9:32am

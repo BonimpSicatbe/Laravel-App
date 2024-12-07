@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\Notification;
+use App\Models\NotificationHasAttachments;
 use App\Models\UserHasNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,10 +58,8 @@ class NotificationController extends Controller
         // Get all notifications of the authenticated user for display
         $notifications = $user->notifications;
 
-
         return view('user.notifications.show', compact('notification', 'notifications'));
     }
-
 
     /**
      * Show the form for editing the specified resource.

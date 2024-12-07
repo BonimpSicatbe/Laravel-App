@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DashboardController as Admin_DashboardController;
 use App\Http\Controllers\Admin\PermissionController as Admin_PermissionController;
 use App\Http\Controllers\Admin\UploadController as Admin_UploadController;
 
+use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\User\DashboardController as User_DashboardController;
 use App\Http\Controllers\User\PortfolioController as User_PortfolioController;
@@ -43,6 +44,11 @@ Route::post('/tmp/upload', [UploadController::class, 'upload'])->name('tmp_uploa
 Route::delete('/tmp/revert', [UploadController::class, 'revert'])->name('tmp_revert');
 Route::get('/tmp/restore', [UploadController::class, 'restore'])->name('tmp_restore');
 Route::get('/tmp/load', [UploadController::class, 'load'])->name('tmp_load');
+Route::get('/attachments/{attachment}/show', [AttachmentController::class, 'show'])->name('attachments.show');
+Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'downloadAttachment'])->name('attachments.download');
+
+
 
 Route::group(['middleware' => ['auth']], function () {
 

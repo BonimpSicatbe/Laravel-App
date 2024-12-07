@@ -67,11 +67,7 @@ class TaskController extends Controller
             'priority' => 'required|in:low,medium,high',
             'due_date' => 'required|date',
             'requirement_id' => 'required|exists:requirements,id',
-//            'attachments' => 'nullable|array', // List of temporary folder IDs
         ]);
-
-        $attachments = $request->attachments;
-//        dd($attachments);
 
         // Create the task
         $task = Task::create([
@@ -84,34 +80,75 @@ class TaskController extends Controller
             'updated_by' => Auth::id(),
         ]);
 
+        // Process attachments
+        $attachments = $request->attachments;
+
         if ($attachments) {
             $file_path = "uploads/tasks/attachments/{$task->id}";
+            $files = collect();
 
             foreach ($attachments as $attachment) {
-                $file_name = $attachment->getClientOriginalName();
-                $size = $attachment->getSize();
-                $type = $attachment->getMimeType();
-                $attachment->storeAs($file_path, $file_name);
+                // Decode the JSON string (if applicable)
+                $decodedAttachment = json_decode($attachment, true);
 
-                Attachment::create([
-                    'file_name' => $file_name,
-                    'size' => $size,
-                    'type' => $type,
-                    'file_path' => $file_path . $file_name,
-                    'task_id' => $task->id,
-                    'requirement_id' => $validatedData['requirement_id'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                    'created_by' => Auth::id(),
-                    'updated_by' => Auth::id(),
-                ]);
+                if (isset($decodedAttachment['folder'])) {
+                    $folder = $decodedAttachment['folder'];
+
+                    // Log the folder name for debugging
+                    \Log::info("Processing files from folder: {$folder}");
+
+                    // Retrieve the temporary files from the database
+                    $temporaryFiles = TemporaryFile::where('folder', $folder)->get();
+
+                    foreach ($temporaryFiles as $tempFile) {
+                        // Define the temporary file's path
+                        $tempFilePath = storage_path("app/uploads/tmp/{$folder}/{$tempFile->filename}");
+
+                        // Ensure the file exists before proceeding
+                        if (file_exists($tempFilePath)) {
+                            $file_name = $tempFile->filename;
+                            $size = filesize($tempFilePath);
+                            $type = mime_content_type($tempFilePath);
+
+                            // Define the permanent storage path
+                            $storedPath = "{$file_path}/{$file_name}";
+                            Storage::put($storedPath, file_get_contents($tempFilePath));
+
+                            // Save the file's metadata to the `attachments` table
+                            $createdAttachment = Attachment::create([
+                                'file_name' => $file_name,
+                                'size' => $size,
+                                'type' => $type,
+                                'file_path' => $storedPath,
+                                'task_id' => $task->id,
+                                'requirement_id' => $validatedData['requirement_id'],
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                                'created_by' => Auth::id(),
+                                'updated_by' => Auth::id(),
+                            ]);
+
+                            $files->push($createdAttachment);
+
+                            // Optionally: Delete the temporary file after moving
+                            unlink($tempFilePath);
+                        }
+                    }
+
+                    // Optionally: Clean up the folder after processing
+                    Storage::deleteDirectory("uploads/tmp/{$folder}");
+                    TemporaryFile::where('folder', $folder)->delete();
+                }
             }
 
+            // Debug output for validation
+            \Log::info('Attachments successfully processed:', $files->toArray());
         }
 
         return redirect()->route('admin.requirements.show', $validatedData['requirement_id'])
             ->with('success', 'Task created successfully with attachments.');
     }
+
 
     /*
     public function store(Request $request)
@@ -186,17 +223,18 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        $user = Auth::user();
-        $attachments = Attachment::with(['task', 'users', 'createdBy'])
-            ->where('task_id', $task->id)
-            ->get();
+        // Load the necessary relationships, including 'users'
+//        $task->load(['attachments', 'requirement', 'createdBy', 'updatedBy', 'users']);
+        $task->with('users')->get();
 
-        $assigned_users = $task->requirement;
+        $assigned_users = $task->requirement; // Assuming you want the requirement's data
+
+        $attachments = Attachment::where('task_id', $task->id)->get();
 
         return view('admin.tasks.show', compact(
-            'attachments',
             'task',
             'assigned_users',
+            'attachments',
         ));
     }
 
@@ -292,29 +330,5 @@ class TaskController extends Controller
         }
     }
 
-    public function upload(Request $request)
-    {
-        if ($request->hasFile('attachments')) {
-            $attachment = $request->file('attachments');
-            $filename = $attachment->getClientOriginalName();
-            $folder = uniqid() . '_' . now()->timestamp;
-            $attachment->storeAs('attachments/tmp/' . $folder, $filename);
 
-            TemporaryFile::create([
-                'folder' => $folder,
-                'filename' => $filename,
-            ]);
-
-            return $folder;
-        }
-        return '';
-    }
-
-    public function revert(Request $request)
-    {
-        $folder = $request->getContent();
-        $temporaryFile = TemporaryFile::where('folder', $folder)->first();
-
-
-    }
 }

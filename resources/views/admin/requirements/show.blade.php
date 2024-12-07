@@ -121,8 +121,8 @@ TODO:
                 </div>
 
                 <div class="">
-                    <x-input-label for="uploadTaskAttachment" :value="__('Upload Attachments')"/>
-                    <input type="file" id="uploadTaskAttachment" name="uploadTaskAttachment" multiple/>
+                    <x-input-label for="attachments" :value="__('Upload Attachments')"/>
+                    <input type="file" id="attachments" name="attachments[]" multiple/>
                 </div>
 
                 <div class="flex justify-end items-center gap-2">
@@ -136,53 +136,73 @@ TODO:
     <dialog id="newAssignedUserModal" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <div class="text-lg font-bold">Add Task</div>
-            <form action="{{ route('admin.tasks.store', $requirement->id) }}" method="post" class="space-y-2">
+            <form action="{{ route('admin.tasks.store', request()->requirement) }}" method="post" class="flex flex-col gap-4" enctype="multipart/form-data">
                 @csrf
+                <div class="text-lg font-bold">Enter Task Details</div>
+
+                <input type="hidden" name="requirement_id" value="{{ $requirement->id }}">
+
+                {{--task name--}}
+                <div>
+                    <x-input-label for="name" :value="__('Name')"/>
+                    <x-text-input id="name" type="text" name="name" :value="old('name')" autofocus autocomplete="name"/>
+                    <x-input-error :messages="$errors->get('name')" class="mt-2"/>
+                </div>
+
+                {{--task description--}}
+                <div>
+                    <x-input-label for="description" :value="__('Description')"/>
+                    <x-textarea id="description" name="description" :value="old('description')" autofocus autocomplete="description"/>
+                    <x-input-error :messages="$errors->get('description')" class="mt-2"/>
+                </div>
+
                 {{--task priority--}}
-                <div class="">
-                    <x-input-label for="priority" :value="__('Priority')"></x-input-label>
-                    <x-select-input name="priority" id="priority" onchange="showSelect2(this.value)" class="capitalize">
-                        <option value="low" class="capitalize" selected>low</option>
+                <div>
+                    <x-input-label for="priority" :value="__('Priority')"/>
+                    <x-select-input name="priority" id="priority" class="capitalize">
+                        <option value="low" class="capitalize">low</option>
                         <option value="medium" class="capitalize">medium</option>
                         <option value="high" class="capitalize">high</option>
                     </x-select-input>
                 </div>
 
-                {{--buttons--}}
-                <div class="flex flex-row justify-end gap-2">
-                    <button type="button" onclick="newAssignedUserModal.close()"
-                            class="btn btn-sm btn-error text-white rounded-lg">Cancel
-                    </button>
-                    <button type="submit" class="btn btn-sm btn-success text-white rounded-lg">Confirm</button>
+                {{--task due date--}}
+                <div>
+                    <x-input-label for="due_date" :value="__('Due Date')"/>
+                    <x-text-input id="due_date" type="datetime-local" name="due_date" :value="old('due_date')" autocomplete="due_date"/>
+                    <x-input-error :messages="$errors->get('due_date')" class="mt-2"/>
+                </div>
+
+                {{--file uploads--}}
+                <div>
+                    <x-input-label for="attachments" :value="__('Upload Attachments')"/>
+                    <input type="file" id="attachments" name="attachments[]" multiple/>
+                </div>
+
+                <div class="flex justify-end items-center gap-2">
+                    <a href="{{ route('admin.requirements.show', request()->requirement) }}" class="btn btn-sm btn-neutral text-white">Done</a>
+                    <button type="submit" class="btn btn-sm btn-success text-white">Create Task</button>
                 </div>
             </form>
         </div>
     </dialog>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Get a reference to the file input element
-            const inputElement = document.querySelector('input[id="uploadTaskAttachment"]');
+            const inputElement = document.querySelector('input[id="attachments"]');
 
-            // Create a FilePond instance
             const pond = FilePond.create(inputElement);
 
-            // Set options for FilePond
+            pond.getFiles();
+
             FilePond.setOptions({
                 server: {
-                    process: {
-                        url: '{{ route('admin.tasks.upload') }}',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        onload: (response) => {
-                            const { folder } = JSON.parse(response);
-                            document.querySelector('input[name="uploadTaskAttachment"]').value = folder;
-                        }
+                    process: '{{ route('tmp_upload') }}',
+                    revert: '{{ route('tmp_revert') }}',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    revert: './revert.php',
-                }
+                },
             });
         });
-
     </script>
 </x-app-layout>

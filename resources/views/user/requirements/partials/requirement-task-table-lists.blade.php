@@ -25,7 +25,7 @@
                         <a href="{{ route('user.tasks.edit', $task->id) }}"
                            class="text-blue-500 hover:text-blue-700 tooltip" data-tip="Edit"><i
                                 class="fa-regular fa-edit"></i></a>
-                        <form action="{{ route('user.tasks.destroy', $task->id) }}" method="post">
+                        <form action="{{ route('user.tasks.destroy', $task->id) }}" onclick="return confirm('Are you sure you want to delete this task?');" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700 tooltip"
