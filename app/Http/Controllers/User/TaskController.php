@@ -55,74 +55,6 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-
-        // Validate the request for task details and file upload
-        $request->validate([
-            'name' => 'required|string',
-            'description' => 'required|string',
-            'due_date' => 'required|date',
-            'priority' => 'required|string',
-            'requirement_id' => 'required|exists:requirements,id',
-            'file' => 'nullable|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
-        ]);
-
-        // Step 1: Create the Task
-        $task = Task::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'due_date' => $request->due_date,
-            'status' => 'pending',
-            'priority' => $request->priority,
-            'requirement_id' => $request->requirement_id,
-            'created_by' => $user->id,
-            'updated_by' => $user->id,
-        ]);
-
-        // Step 2: Retrieve the requirement
-        $requirement = Requirement::find($request->requirement_id);
-
-        // Step 3: Get users and create task-user relationships
-        $users = $this->getUsersBasedOnType($requirement);
-
-        if ($users->isNotEmpty()) {
-            // Use batch insert for efficiency
-            $taskUsers = $users->map(function ($userId) use ($task, $requirement) {
-                return [
-                    'task_id' => $task->id,
-                    'user_id' => $userId,
-                    'requirement_id' => $requirement->id,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            })->toArray();
-
-            TaskUser::insert($taskUsers);
-        }
-
-        if ($request->uploadTaskAttachment) {
-            $temporaryFile = TemporaryFile::where('folder', $request->uploadTaskAttachment)->first();
-            if ($temporaryFile) {
-                // Move file from temporary storage to the final destination
-                $path = storage_path('app/public/upload_attachments/tmp/' . $request->uploadTaskAttachment . '/' . $temporaryFile->filename);
-                $task->addMedia($path)->toMediaCollection('attachments');
-
-                // Delete temp folder and file after moving
-                Storage::deleteDirectory('public/upload_attachments/tmp/' . $request->uploadTaskAttachment);
-                $temporaryFile->delete();
-            }
-        }
-
-        // Step 4: Handle file upload if provided
-//        if ($request->has('uploadTaskAttachment')) {
-//            foreach ($request->uploadTaskAttachment as $filePath) {
-//                Attachment::create([
-//                    'task_id' => $task->id,
-//                    'file_path' => $filePath,
-//                    'file_name' => basename($filePath),
-//                ]);
-//            }
-//        }
 
         return back()->with('success', 'Task created successfully and users assigned!');
     }
@@ -134,14 +66,14 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         $user = Auth::user();
-        $attachments = Attachment::with(['task', 'users', 'createdBy'])
-            ->where('task_id', $task->id)
-            ->get();
+//        $attachments = Attachment::with(['task', 'users', 'createdBy'])
+//            ->where('task_id', $task->id)
+//            ->get();
 
         $assigned_users = $task->requirement;
 
         return view('user.tasks.show', compact(
-            'attachments',
+//            'attachments',
             'task',
             'assigned_users',
         ));

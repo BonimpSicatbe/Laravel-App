@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Attachment;
 use App\Models\File;
 use App\Models\Requirement;
+use App\Models\RequirementUser;
 use App\Models\Task;
 use App\Models\TaskAttachment;
+use App\Models\TaskUser;
 use App\Models\TemporaryFile;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -79,6 +81,23 @@ class TaskController extends Controller
             'created_by' => Auth::id(),
             'updated_by' => Auth::id(),
         ]);
+
+        // get all the users that is related to the requirement that is also related to the task
+        $users = RequirementUser::where('requirement_id', $validatedData['requirement_id'])->get();
+
+        $task_users = collect();
+        foreach ($users as $user) {
+            $taskUser = TaskUser::create([
+                'user_id' => $user->id,
+                'task_id' => $task->id,
+                'requirement_id' => $validatedData['requirement_id'],
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $task_users->push($taskUser);
+        }
+//        dd($users, $task_users);
 
         // Process attachments
         $attachments = $request->attachments;
@@ -293,10 +312,20 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->files()->delete();
+        // Step 1: Detach related users in the `task_users` table
+        $task->users()->detach();
+
+        // Step 2: Delete associated files from storage
+        foreach ($task->files as $file) {
+            Storage::delete($file->path); // Deletes the file from storage
+            $file->delete(); // Deletes the file record from the database
+        }
+
+        // Step 3: Delete the task itself
         $task->delete();
 
-        return redirect()->back()->with('success', 'Task deleted successfully');
+        // Step 4: Redirect with a success message
+        return redirect()->back()->with('success', 'Task and its related data deleted successfully');
     }
 
     /*

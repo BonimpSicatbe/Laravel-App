@@ -53,11 +53,11 @@ class User extends Authenticatable
     {
         return $this->hasManyThrough(
             Task::class,
-            RequirementUser::class,
+            TaskUser::class,
             'user_id',
-            'requirement_id',
             'id',
-            'id'
+            'id',
+            'user_id',
         );
     }
 

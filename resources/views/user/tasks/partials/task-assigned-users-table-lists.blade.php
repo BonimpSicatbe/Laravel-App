@@ -28,10 +28,10 @@
                     {{--                <td class="text-nowrap truncate">{{ $user->created_at }}</td>--}}
                     {{--                <td class="text-nowrap truncate">{{ $user->updated_at }}</td>--}}
                     <td class="flex flex-row gap-2">
-                        <a href="{{ route('users.show', $user->id) }}"
+                        <a href="{{ route('user.users.show', $user->id) }}"
                            class="text-green-500 hover:text-green-700 transition-all"><i
                                 class="fa-regular fa-eye"></i></a>
-                        <a href="{{ route('users.edit', $user->id) }}"
+                        <a href="{{ route('user.users.edit', $user->id) }}"
                            class="text-blue-500 hover:text-blue-700 transition-all"><i
                                 class="fa-regular fa-edit"></i></a>
 
@@ -39,7 +39,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700 transition-all"><i
-                                    class="fa-regular fa-trash"></i></button>
+                                    class="fa-regula fa-user-xmark"></i></button>
                         </form>
                     </td>
                 </tr>

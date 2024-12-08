@@ -4,18 +4,12 @@
     {{--details--}}
     <x-container-section>
         {{--details--}}
-        @include('tasks.partials.task-requirement-details')
+        @include('user.tasks.partials.task-requirement-details')
 
         {{--attachments--}}
         <div class="">
             <x-input-label class="capitalize">attachments</x-input-label>
-            @if($task->attachments->isEmpty())
-                <div class="text-md font-normal border border-gray-500 rounded-lg p-2">No Attachments.</div>
-            @else
-                @foreach($task->attachments as $attachment)
-                    <div class="text-md font-normal border border-gray-500 rounded-lg p-2">{{ $attachment->name }}</div>
-                @endforeach
-            @endif
+            @include('user.tasks.partials.task-attachment-lists')
         </div>
 
     </x-container-section>
@@ -30,46 +24,9 @@
 
         {{--file attachments--}}
         <div class="flex flex-col gap-2 overflow-y-auto max-h-[500px]">
-            <!--
-            {{-- sort section --}}
-            <div class="flex flex-row gap-2">
-                {{--sort status--}}
-            <x-select-input class="focus:border-green-500" select-label="Select Status">
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </x-select-input>
-
-{{--sort status--}}
-            <x-select-input class="focus:border-green-500" select-label="Select Status">
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </x-select-input>
-
-{{--search bar--}}
-            <x-text-input class="" placeholder="Search..."/>
-
-{{--add new file--}}
-            <button class="btn btn-outline btn-success" onclick="newRequirementModal.showModal()">
-                <i class="fa-solid fa-plus"></i>
-                <span>New Requirement</span>
-            </button>
-
-        </div>
--->
             {{--table--}}
-            @include('tasks.partials.tasks-uploaded-file-table-lists')
+            @include('user.tasks.partials.tasks-uploaded-file-table-lists')
         </div>
-    </x-container-section>
-
-    {{--admin - included users list--}}
-    <x-container-section>
-        <div class="text-lg font-bold">
-            <i class="fa-regular fa-users mr-2"></i>
-            <span>Assigned Users</span>
-        </div>
-        @include('tasks.partials.task-assigned-users-table-lists')
     </x-container-section>
 
     <script>

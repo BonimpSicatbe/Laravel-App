@@ -11,14 +11,28 @@ class TaskUser extends Model
 
     protected $table = 'task_users';
 
-    protected $fillable = ['task_id', 'user_id', 'requirement_id'];
+    protected $fillable = ['task_id', 'user_id', 'requirement_id', 'created_at', 'updated_at'];
 
-    public function tasks(Task $task)
-    {
-        return $this->hasMany(
-            TaskUser::class,
-            'user_id',
-            'task_id',
-        );
-    }
+//    public function user()
+//    {
+//        return $this->belongsTo(User::class);
+//    }
+//
+//    public function requirement()
+//    {
+//        return $this->belongsTo(Requirement::class);
+//    }
+//
+//    public function task()
+//    {
+//        return $this->hasManyThrough(
+//            Task::class,
+//            TaskUser::class,
+//            'user_id',
+//            'id',
+//            'id',
+//            'task_id',
+//        );
+//    }
+
 }

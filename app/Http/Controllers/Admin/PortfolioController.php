@@ -7,6 +7,8 @@ use App\Http\Requests\StorePortfolioRequest;
 use App\Http\Requests\UpdatePortfolioRequest;
 use App\Models\File;
 use App\Models\Portfolio;
+use App\Models\Requirement;
+use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 
 class PortfolioController extends Controller
