@@ -5,7 +5,7 @@
             <x-input-label>{{ ucwords($task->requirement->name) }}</x-input-label>
             <div class="text-xl font-bold">{{ ucwords($task->name) }}</div>
         </div>
-        <a href="{{ route('user.tasks.edit', $task->id) }}" class="text-blue-500 hover:text-blue-700 transition-all">
+        <a href="{{ route('tasks.edit', $task->id) }}" class="text-blue-500 hover:text-blue-700 transition-all">
             <i class="fa-regular fa-edit"></i>
             <span>Edit</span>
         </a>

@@ -1,6 +1,6 @@
 @if($notifications->isEmpty())
     <div class="space-y-2">
-        @for($i = 0;$i < 5;$i++)
+        @for($i = 0;$i < 3;$i++)
             <div class="group flex flex-row rounded-lg gap-4 p-2 hover:bg-gray-100 transition-all">
                 <div class="bg-gray-100 h-12 w-12 shrink-0 rounded-full group-hover:bg-white"></div>
 

@@ -17,7 +17,9 @@
                 <ul class="">
                     @foreach($task->attachments as $attachment)
                         <li class="flex items-center justify-between border border-gray-500 rounded-lg p-2 mb-2">
-                            <span class="text-sm font-normal">{{ $attachment->file_name }}</span>
+                    <span class="text-md font-normal">
+                        {{ $attachment->file_name }}
+                    </span>
                             <div class="flex space-x-2">
                                 {{-- View Button --}}
                                 <a

@@ -1,31 +1,56 @@
-<div class="grid xs:grid-cols-2 sm:grid-cols-3 gap-4 w-full">
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">Requirements</div>
-        <div class="stat-value text-primary">{{ $total_requirements->count() }}</div>
+<a href="{{ route('admin.files.index')}}"
+    class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
+    <i class="fa-solid hover:fa-solid fa-file text-7xl"></i>
+    <div class="text-lg font-bold">All Files</div>
+    <div class="flex flex-col w-full">
+        <progress class="progress progress-success w-full" value="25" max="100"></progress>
+        <div class="flex flex-row justify-between">
+            <div class="text-sm">00 GB</div>
+            <div class="text-sm">00 GB</div>
+        </div>
     </div>
+    {{--        <div class="text-sm">$item->size</div>--}}
+</a>
 
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">Tasks</div>
-        <div class="stat-value text-primary">{{ $total_tasks->count() }}</div>
+<a href="{{ route('admin.files.index') }}"
+    class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
+    <i class="fa-solid hover:fa-solid fa-folder text-7xl"></i>
+    <div class="text-lg font-bold">Folders</div>
+    <div class="flex flex-col w-full">
+        <progress class="progress progress-success w-full" value="50" max="100"></progress>
+        <div class="flex flex-row justify-between">
+            <div class="text-sm">00 GB</div>
+            <div class="text-sm">00 GB</div>
+        </div>
     </div>
+    {{--        <div class="text-sm">$item->size</div>--}}
+</a>
 
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">Files</div>
-        <div class="stat-value text-primary">{{ $total_attachments->count() }}</div>
+<a href="{{ route('admin.files.index') }}"
+    class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
+    <i class="fa-solid hover:fa-solid fa-file-lines text-7xl"></i>
+    <div class="text-lg font-bold">Documents</div>
+    <div class="flex flex-col w-full">
+        <progress class="progress progress-success w-full" value="75" max="100"></progress>
+        <div class="flex flex-row justify-between">
+            <div class="text-sm">00 GB</div>
+            <div class="text-sm">00 GB</div>
+        </div>
     </div>
+    {{--        <div class="text-sm">$item->size</div>--}}
+</a>
 
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">Pending Tasks</div>
-        <div class="stat-value text-primary">{{ $total_attachments->count() }}</div>
+<a href="{{ route('admin.files.index') }}"
+    class="flex grow flex-col items-center justify-center rounded-lg border border-gray-500 space-y-2 p-8 transition-all hover:bg-green-50">
+    <i class="fa-solid hover:fa-solid fa-photo-film text-7xl"></i>
+    <div class="text-lg font-bold">Media</div>
+    <div class="flex flex-col w-full">
+        <progress class="progress progress-success w-full" value="80" max="100"></progress>
+        <div class="flex flex-row justify-between">
+            <div class="text-sm">00 GB</div>
+            <div class="text-sm">00 GB</div>
+        </div>
     </div>
+    {{--        <div class="text-sm">$item->size</div>--}}
+</a>
 
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">In Progress Tasks</div>
-        <div class="stat-value text-primary">{{ $total_attachments->count() }}</div>
-    </div>
-
-    <div class="text-center shadow rounded-lg p-4">
-        <div class="text-gray-400">Completed Tasks</div>
-        <div class="stat-value text-primary">{{ $total_attachments->count() }}</div>
-    </div>
-</div>

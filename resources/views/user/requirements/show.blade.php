@@ -40,13 +40,41 @@ TODO:
     {{--task list--}}
     <x-container-section>
         <div class="space-y-2">
-            {{--label--}}
-            <div class="text-md font-bold space-x-2 grow">
-                <i class="fa-regular fa-list"></i>
-                <span>Tasks</span>
+            <div class="flex flex-row items-center gap-2">
+                {{--label--}}
+                <div class="text-md font-bold space-x-2 grow">
+                    <i class="fa-regular fa-list"></i>
+                    <span>Tasks</span>
+                </div>
+
+                {{--new task--}}
+                <button name="addTask" id="addTask" onclick="newTaskModal.showModal()"
+                        class="btn btn-sm btn-outline">
+                    <i class="fa-regular fa-plus"></i>
+                    <span>Add Task</span>
+                </button>
             </div>
 
             @include('user.requirements.partials.requirement-task-table-lists')
+        </div>
+    </x-container-section>
+
+    {{--assigned users--}}
+    <x-container-section>
+        <div class="space-y-2">
+            <div class="flex flex-row items-center gap-2">
+                <div class="text-lg font-bold grow">
+                    <i class="fa-regular fa-users"></i>
+                    <span>Assigned Users</span>
+                </div>
+
+                <button name="addAssignedUser" id="addAssignedUser" onclick="newAssignedUserModal.showModal()"
+                        class="btn btn-sm btn-outline">
+                    <i class="fa-regular fa-plus"></i>
+                    <span>Assign New User</span>
+                </button>
+            </div>
+            @include('user.requirements.partials.requirement-assigned-users-table-lists')
         </div>
     </x-container-section>
 

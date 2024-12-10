@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
@@ -30,7 +29,7 @@ class Task extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function user(): BelongsToMany
+    public function user(): BelongsTo
     {
         return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
     }
@@ -39,7 +38,7 @@ class Task extends Model
     {
         return $this->belongsToMany(
             User::class,
-            'task_users',
+            'task_users'
         );
     }
 
@@ -50,9 +49,7 @@ class Task extends Model
 
     public function files()
     {
-        return $this->hasMany(
-            File::class,
-        );
+        return $this->hasMany(File::class);
     }
 
     // =========================

@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Attachment;
-use App\Models\File;
 use App\Models\Notification;
-use App\Models\Requirement;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
@@ -25,27 +22,16 @@ class DashboardController extends Controller
         $tasks = Task::where('status', ['pending', 'in_progress'])
             ->get();
 
-        $notifications = $user->notifications;
+//        $notifications = Notification::where('notifiable_id', $user->id)  // $userId is the ID of the user
+//        ->where('notifiable_type', User::class)
+//            ->where('created_at', '>=', now()->subDays(1))
+//            ->get();
 
-        // overview
-        $total_requirements = Requirement::all();
-        $total_tasks = Task::all();
-        $total_users = User::all();
-        $total_attachments = Attachment::all();
-        $total_files = File::all();
-
-        // pending task
-        $pending_tasks = Task::where('status', ['pending', 'in_progress'])->get();
+        $notifications = Auth::user()->notifications;
 
         return view('admin.dashboard.index', compact([
             'notifications',
             'tasks',
-            'total_requirements',
-            'total_tasks',
-            'total_users',
-            'total_attachments',
-            'total_files',
-            'pending_tasks',
         ]));
     }
 

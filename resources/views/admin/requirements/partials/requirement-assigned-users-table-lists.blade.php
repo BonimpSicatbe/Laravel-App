@@ -39,7 +39,7 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-500 hover:text-red-700 transition-all"><i
-                                    class="fa-regular fa-user-xmark"></i></button>
+                                    class="fa-regular fa-trash"></i></button>
                         </form>
                     </td>
                 </tr>
