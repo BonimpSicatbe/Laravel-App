@@ -131,6 +131,7 @@ class RequirementController extends Controller
         $notification = Notification::create([
             'title' => $requirement->name,
             'message' => $requirement->description,
+            'requirement_id' => $requirement->id,
             'sent_to' => $sentTo === 'all' ? 'all' : $sentTo->name,
             'created_by' => $user->id,
             'updated_by' => $user->id,

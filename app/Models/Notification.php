@@ -9,7 +9,7 @@ class Notification extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'message', 'sent_to', 'created_by', 'updated_by'];
+    protected $fillable = ['title', 'message', 'requirement_id', 'sent_to', 'created_by', 'updated_by'];
 
     public function users()
     {
@@ -22,5 +22,4 @@ class Notification extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
-
 }
