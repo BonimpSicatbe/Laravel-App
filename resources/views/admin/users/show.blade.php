@@ -1,0 +1,106 @@
+<x-app-layout>
+    <x-app-header>Show User</x-app-header>
+
+    <x-container-section>
+        <div class="flex flex-row items-center gap-6">
+            <div class="bg-gray-200 rounded-full w-[100px] h-[100px]"></div> {{--circle image placeholder--}}
+            <div class="flex flex-col gap-2">
+                <div class="text-lg font-bold">Personal Info</div>
+                <div class="text-sm font-normal text-gray-500">You can update your profile photo and personal
+                    details
+                    here.
+                </div>
+                <div class="space-x-2">
+                    {{--                    <button type="button" class="btn btn-sm btn-outline btn-error">Cancel</button>--}}
+                    <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-success text-white">Update</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <x-input-label for="name" :value="__('Name')"/>
+                <x-text-input id="name" name="name" type="text" class="mt-1 block w-full"
+                              :value="old('name', $user->name)" required autofocus autocomplete="name" disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('name')"/>
+            </div>
+
+            <div>
+                <x-input-label for="email" :value="__('Email')"/>
+                <x-text-input id="email" name="email" type="email" class="mt-1 block w-full"
+                              :value="old('email', $user->email)" required autocomplete="username" disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('email')"/>
+            </div>
+
+            <div>
+                <x-input-label for="role" :value="__('Role')"/>
+                <x-text-input id="role" name="role" type="text" class="mt-1 block w-full capitalize"
+                              :value="old('role', $user->getRoleNames()->join(', '))" required autocomplete="username" disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('role')"/>
+            </div>
+
+            <div>
+                <x-input-label for="position" :value="__('Position')"/>
+                <x-text-input id="position" name="position" type="text" class="mt-1 block w-full capitalize"
+                              :value="old('position', $user->position->name)" required autocomplete="position" disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('position')"/>
+            </div>
+
+            <div>
+                <x-input-label for="course" :value="__('Courses')"/>
+                <div class="space-y-2">
+                    @if($courses->isEmpty())
+                        <div class="text-md font-medium space-x-2 bg-gray-100 rounded-lg p-4">
+                            <span>There is no course listed.</span>
+                        </div>
+                    @else
+                        <div class="overflow-y-auto max-h-[150px]">
+                            @foreach($courses as $course)
+                                <div class="text-md font-medium space-x-2 bg-gray-100 rounded-lg p-4">
+                                    <span>{{ $course->course->name }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div>
+                <x-input-label for="subject" :value="__('Subjects')"/>
+                @if($subjects->isEmpty())
+                    <div class="text-md font-medium space-x-2 bg-gray-100 rounded-lg p-4">
+                        <span>There is no subject listed.</span>
+                    </div>
+                @else
+                    <div class="overflow-y-auto max-h-[150px]">
+                        @foreach($subjects as $subject)
+                            <div class="text-md font-medium space-x-2 bg-gray-100 rounded-lg p-4">
+                                <span>{{ $subject->subject->name }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+
+            {{--            <div class="flex flex-row gap-4">--}}
+            <div class="">
+                <x-input-label for="created_at" :value="__('Created At')"/>
+                <x-text-input id="created_at" name="created_at" type="text" class="mt-1 block w-full"
+                              :value="old('created_at', $user->created_at)" required autocomplete="username"
+                              disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('created_at')"/>
+            </div>
+
+            <div class="">
+                <x-input-label for="updated_at" :value="__('Updated At')"/>
+                <x-text-input id="updated_at" name="updated_at" type="text" class="mt-1 block w-full"
+                              :value="old('updated_at', $user->updated_at)" required autocomplete="username"
+                              disabled/>
+                <x-input-error class="mt-2" :messages="$errors->get('updated_at')"/>
+            </div>
+            {{--            </div>--}}
+
+
+        </div>
+    </x-container-section>
+
+</x-app-layout>
