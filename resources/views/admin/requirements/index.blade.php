@@ -20,13 +20,20 @@
             <x-text-input class="" placeholder="Search..."/>
 
             {{--add new file--}}
-            <a href="{{ route('admin.requirements.create') }}" class="btn btn-md btn-outline btn-success">Create
-                Requirement</a>
+            {{--            <a href="{{ route('admin.requirements.create') }}" class="btn btn-md btn-success text-white">Create <i class="fa-solid fa-plus"></i></a>--}}
+            <button class="btn btn-md btn-success text-white" onclick="create_requirement.showModal()">Create <i class="fa-solid fa-plus"></i></button>
         </div>
 
         {{-- requirements table --}}
-{{--        <div class="overflow-x-auto">--}}
-            @include('admin.requirements.partials.requirement-table-lists')
-{{--        </div>--}}
+        @include('admin.requirements.partials.requirement-table-lists')
     </x-container-section>
+
+    <dialog id="create_requirement" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl space-y-2">
+            <h3 class="text-lg font-bold">Create Requirement</h3>
+            @include('admin.requirements.partials.requirement-create-form')
+        </div>
+    </dialog>
+
+
 </x-app-layout>

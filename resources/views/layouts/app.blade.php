@@ -63,7 +63,6 @@
 </div>
 
 <script>
-
     document.addEventListener('DOMContentLoaded', function () {
         const successMessage = document.getElementById('success-message');
 
@@ -78,6 +77,28 @@
                 successMessage.remove();
             }, 4000); // 4 seconds to ensure fade-out completes
         }
+
+        /*
+        *
+        * FILEPOND SCRIPT
+        *
+        * */
+
+        const inputElement = document.querySelector('input[type="file"]');
+        const pond = FilePond.create(inputElement);
+
+        pond.getFiles();
+
+        FilePond.setOptions({
+            server: {
+                process: '{{ route('tmp_upload') }}',
+                revert: '{{ route('tmp_revert') }}',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                maxFiles: 1,
+            },
+        });
     });
 </script>
 @yield('scripts')

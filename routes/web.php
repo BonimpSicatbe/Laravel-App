@@ -65,9 +65,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('notifications', Admin_NotificationController::class);
 
         // ===== REQUIREMENTS =====
+        Route::get('/api/get-group-data', [Admin_RequirementController::class, 'getGroupData']);
         Route::delete('/requirements/{requirement}/user/{user}', [Admin_RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
         Route::resource('requirements', Admin_RequirementController::class);
-;;;;
+
         // ===== TASKS =====
         Route::post('/tasks/upload', [Admin_TaskController::class, 'upload'])->name('tasks.upload');
         Route::delete('/tasks/revert', [Admin_TaskController::class, 'revert'])->name('tasks.revert');

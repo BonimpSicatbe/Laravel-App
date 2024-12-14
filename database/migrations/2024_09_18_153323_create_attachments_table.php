@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('type');
             $table->string('file_path');
             $table->foreignId('requirement_id')->constrained('requirements')->onDelete('cascade');
-            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
             $table->timestamps();

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use App\Models\Course;
 use App\Models\CourseUser;
 use App\Models\Notification;
@@ -13,6 +14,7 @@ use App\Models\RequirementUser;
 use App\Models\Subject;
 use App\Models\SubjectUser;
 use App\Models\Task;
+use App\Models\TemporaryFile;
 use App\Models\User;
 use App\Models\UserHasNotification;
 use App\Notifications\RequirementAssignedNotification;
@@ -20,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class RequirementController extends Controller
 {
@@ -33,7 +36,16 @@ class RequirementController extends Controller
         $requirements = Requirement::with(['tasks', 'users'])
             ->get();
 
-        return view('admin.requirements.index', compact('requirements'));
+        $courses = Course::all();
+        $subjects = Subject::all();
+        $positions = Position::all();
+
+        return view('admin.requirements.index', compact(
+            'requirements',
+            'courses',
+            'subjects',
+            'positions',
+        ));
     }
 
     /**
@@ -66,13 +78,15 @@ class RequirementController extends Controller
             'description' => 'required|string',
             'due_date' => 'required|date',
             'select_group' => 'required|string',  // Either 'course', 'subject', 'position', or 'all'
-            'selected_target' => 'nullable',
+            'select_target_group' => 'nullable',
+            'uploadSyllabus' => 'nullable',
         ]);
 
         // Step 1: Determine 'sent_to_type' and 'sent_to_id'
-        $sentToType = $request->select_group === 'all' ? 'all' : $request->select_group;
-        $sentToId = $request->select_group === 'all' ? null : $request->selected_target;
+        $select_group = $validatedData['select_group'] === 'all' ? 'all' : $validatedData['select_group'];
+        $select_target_group = $validatedData['select_group'] === 'all' ? null : $validatedData['select_target_group'];
 
+        \Log::info('Creating requirement.');
         // Step 2: Create the Requirement
         $requirement = Requirement::create([
             'name' => $validatedData['name'],
@@ -80,22 +94,24 @@ class RequirementController extends Controller
             'due_date' => $validatedData['due_date'],
             'created_by' => $user->id,
             'updated_by' => $user->id,
-            'sent_to_type' => $sentToType,
-            'sent_to_id' => $sentToId,
+            'sent_to_type' => $select_group,
+            'sent_to_id' => $select_target_group,
         ]);
+
+        \Log::info("Requirement {$requirement->name} created.");
 
         // Step 3: Fetch users based on the selected group
         // Initialize an empty collection of users
         $users = collect();
-        switch ($request->select_group) {
+        switch ($select_group) {
             case 'course':
-                $users = CourseUser::where('course_id', $sentToId)->pluck('user_id');
+                $users = CourseUser::where('course_id', $select_target_group)->pluck('user_id');
                 break;
             case 'subject':
-                $users = SubjectUser::where('subject_id', $sentToId)->pluck('user_id');
+                $users = SubjectUser::where('subject_id', $select_target_group)->pluck('user_id');
                 break;
             case 'position':
-                $users = PositionUser::where('position_id', $sentToId)->pluck('user_id');
+                $users = PositionUser::where('position_id', $select_target_group)->pluck('user_id');
                 break;
             case 'all':
                 $users = User::pluck('id');
@@ -112,15 +128,15 @@ class RequirementController extends Controller
 
         // get the data for sentToType
         $sentTo = null;
-        switch ($sentToType) {
+        switch ($select_group) {
             case 'course':
-                $sentTo = Course::where('id', $sentToId)->first();
+                $sentTo = Course::where('id', $select_target_group)->first();
                 break;
             case 'subject':
-                $sentTo = Subject::where('id', $sentToId)->first();
+                $sentTo = Subject::where('id', $select_target_group)->first();
                 break;
             case 'position':
-                $sentTo = Position::where('id', $sentToId)->first();
+                $sentTo = Position::where('id', $select_target_group)->first();
                 break;
             case 'all':
                 $sentTo = 'all'; // Explicitly set as 'all'
@@ -129,19 +145,21 @@ class RequirementController extends Controller
 
         // Step 5: Create the notification
         $notification = Notification::create([
+            'notification_name' => "New Requirement Assigned.",
+            'notification_description' => "{$requirement->created_by} created a new requirement.",
             'title' => $requirement->name,
             'message' => $requirement->description,
             'requirement_id' => $requirement->id,
             'sent_to' => $sentTo === 'all' ? 'all' : $sentTo->name,
-            'created_by' => $user->id,
-            'updated_by' => $user->id,
+            'created_by' => $requirement->created_by,
+            'updated_by' => $requirement->updated_by,
         ]);
 
         // assign the notification for each user
         foreach ($users as $userId) {
-            RequirementUser::create(['requirement_id' => $requirement->id, 'user_id' => $userId, 'created_at' => now(), 'updated_at' => now()]);
+            $requirementUser = RequirementUser::create(['requirement_id' => $requirement->id, 'user_id' => $userId, 'created_at' => now(), 'updated_at' => now()]);
 
-            UserHasNotification::create([
+            $userHasNotification = UserHasNotification::create([
                 'notification_id' => $notification->id,
                 'user_id' => $userId,
                 'created_at' => now(),
@@ -149,11 +167,75 @@ class RequirementController extends Controller
             ]);
         }
 
+        $uploadedSyllabus = $validatedData['uploadSyllabus'];
+        if ($uploadedSyllabus) {
+            $file_path = "uploads/requirements/syllabus/{$requirement->id}";
+
+            $files = collect();
+            foreach ($uploadedSyllabus as $syllabus) {
+                // Decode the JSON string (if applicable)
+                $decodedFile = json_decode($syllabus, true);
+
+                if (isset($decodedFile['folder'])) {
+                    $folder = $decodedFile['folder'];
+
+                    // Log the folder name for debugging
+                    \Log::info("Processing files from folder: {$folder}");
+
+                    // Retrieve the temporary files from the database
+                    $temporaryFiles = TemporaryFile::where('folder', $folder)->get();
+
+                    foreach ($temporaryFiles as $tempFile) {
+                        // Define the temporary file's path
+                        $tempFilePath = storage_path("app/uploads/tmp/{$folder}/{$tempFile->filename}");
+
+                        // Ensure the file exists before proceeding
+                        if (file_exists($tempFilePath)) {
+                            $file_name = $tempFile->filename;
+                            $size = filesize($tempFilePath);
+                            $type = mime_content_type($tempFilePath);
+
+                            // Define the permanent storage path
+                            $storedPath = "{$file_path}/{$file_name}";
+                            Storage::put($storedPath, file_get_contents($tempFilePath));
+
+                            // Save the file's metadata to the `attachments` table
+                            $createdAttachment = Attachment::create([
+                                'file_name' => $file_name,
+                                'size' => $size,
+                                'type' => $type,
+                                'file_path' => $storedPath,
+                                'requirement_id' => $requirement->id,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                                'created_by' => $user->id,
+                                'updated_by' => $user->id,
+                            ]);
+
+                            $files->push($createdAttachment);
+
+                            // Optionally: Delete the temporary file after moving
+                            unlink($tempFilePath);
+                        }
+                    }
+
+                    // Optionally: Clean up the folder after processing
+                    Storage::deleteDirectory("uploads/tmp/{$folder}");
+                    TemporaryFile::where('folder', $folder)->delete();
+                }
+                $files->push($decodedFile);
+            }
+
+            // Debug output for validation
+            \Log::info('Attachments successfully processed:', $files->toArray());
+        }
+
+//        dd($request->all());
+
         // Step 7: Redirect to Task Creation page
-        return redirect()->route('admin.tasks.create', ['requirement' => $requirement->id])
+        return redirect()->route('admin.requirements.index')
             ->with('success', 'Requirement created successfully and users assigned!');
     }
-
 
 
     /**
@@ -260,6 +342,22 @@ class RequirementController extends Controller
         $task->delete();
 
         return redirect()->back()->with('success', 'Task deleted successfully');
+    }
+
+    public function getGroupData(Request $request)
+    {
+        $type = $request->query('type');
+        $data = [];
+
+        if ($type === 'course') {
+            $data = Course::select('id', 'name')->get();
+        } elseif ($type === 'subject') {
+            $data = Subject::select('id', 'name')->get();
+        } elseif ($type === 'position') {
+            $data = Position::select('id', 'name')->get();
+        }
+
+        return response()->json($data);
     }
 }
 
