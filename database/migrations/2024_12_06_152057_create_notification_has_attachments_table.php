@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('notification_has_attachments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('notification_id')->constrained();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('attachment_id')->constrained();
             $table->timestamps();
         });
     }

@@ -14,5 +14,4 @@
     <x-container-section>
         @include('admin.requirements.partials.requirement-create-form', ['courses' => $courses, 'subjects' => $subjects, 'positions' => $positions])
     </x-container-section>
-
 </x-app-layout>

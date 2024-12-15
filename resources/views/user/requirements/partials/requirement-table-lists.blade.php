@@ -4,10 +4,6 @@
         <th>Name</th>
         <th>Description</th>
         <th>Status</th>
-        {{--        <th>Created By</th>--}}
-        <th>Tasks</th>
-        <th>Users</th>
-        {{--        <th>Sent To</th>--}}
         <th>Created At</th>
         <th>Due Date</th>
         <th>Actions</th>
@@ -19,7 +15,7 @@
             <td colspan="8" class="text-center font-bold text-black">No Requirements Listed.</td>
         </tr>
     @else
-        @foreach ($requirements as $requirement)
+        @foreach ($user->requirements as $requirement)
             <tr>
                 {{-- name --}}
                 <td class="truncate"><a href="{{ route('user.requirements.show', $requirement->id) }}"
@@ -30,16 +26,6 @@
 
                 {{-- status --}}
                 <td class="truncate"><a href="">{{ $requirement->status }}</a></td>
-
-                {{-- created by --}}
-                {{--                <td class="truncate">{{ $requirement->createdBy->name }}</td>--}}
-
-                <td class="truncate">{{ $requirement->tasks->count() }}</td>
-                <td class="truncate">{{ $requirement->users->count() }}</td>
-
-                {{--Sent To--}}
-                {{--<td></td>--}}
-                {{--<td class="truncate">{{ $requirement->sentTo() }}</td>--}}
 
                 {{--Created At--}}
                 <td class="truncate">{{ $requirement->created_at }}</td>

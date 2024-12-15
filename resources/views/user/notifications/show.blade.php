@@ -93,9 +93,7 @@
                                 {{-- TODO: display attachments included for every requirements  --}}
 
                                 {{-- attachment container --}}
-                                <div class="grid grid-cols-3 gap-2">
-                                    @include('user.notifications.partials.notification-attachments', ['notification' => $notification->id])
-                                </div>
+                                @include('user.notifications.partials.notification-attachments')
 
                             </div>
                         </div>

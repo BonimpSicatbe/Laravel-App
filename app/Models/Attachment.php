@@ -33,6 +33,11 @@ class Attachment extends Model
         return $this->belongsTo(Requirement::class);
     }
 
+    public function notification()
+    {
+        return $this->belongsTo(Notification::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

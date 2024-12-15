@@ -4,7 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Requirement;
+use App\Models\RequirementUser;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,7 +18,7 @@ class RequirementController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $requirements = $user->requirements()->get();
+        $requirements = $user->requirements;
 
         return view('user.requirements.index', compact(
             'user',

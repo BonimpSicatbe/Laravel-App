@@ -84,20 +84,34 @@
         *
         * */
 
-        const inputElement = document.querySelector('input[type="file"]');
-        const pond = FilePond.create(inputElement);
+        {{--const inputElement = document.querySelector('input[type="file"]');--}}
+        {{--const pond = FilePond.create(inputElement);--}}
 
-        pond.getFiles();
+        {{--pond.getFiles();--}}
 
-        FilePond.setOptions({
-            server: {
-                process: '{{ route('tmp_upload') }}',
-                revert: '{{ route('tmp_revert') }}',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        {{--FilePond.setOptions({--}}
+        {{--    server: {--}}
+        {{--        process: '{{ route('tmp_upload') }}',--}}
+        {{--        revert: '{{ route('tmp_revert') }}',--}}
+        {{--        headers: {--}}
+        {{--            'X-CSRF-TOKEN': '{{ csrf_token() }}'--}}
+        {{--        },--}}
+        {{--        maxFiles: 1,--}}
+        {{--    },--}}
+        {{--});--}}
+
+        const inputs = document.querySelectorAll('input[type="file"]');
+        inputs.forEach(input => {
+            FilePond.create(input, {
+                server: {
+                    process: '{{ route('tmp_upload') }}',
+                    revert: '{{ route('tmp_revert') }}',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
                 },
-                maxFiles: 1,
-            },
+                allowMultiple: true,
+            });
         });
     });
 </script>
