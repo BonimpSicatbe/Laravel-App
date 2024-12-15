@@ -20,7 +20,8 @@ class NotificationController extends Controller
      */
     public function index()
     {
-        $notifications = Auth::user()->notifications;
+        $user = Auth::user();
+        $notifications = $user->notifications;
 
         return view('user.notifications.index', compact('notifications'));
     }
@@ -46,6 +47,8 @@ class NotificationController extends Controller
      */
     public function show(Notification $notification)
     {
+//        dd(Attachment::where('requirement_id', $notification->id)->get());
+
         $user = Auth::user();
 
         // Check if the user has the notification in the pivot table

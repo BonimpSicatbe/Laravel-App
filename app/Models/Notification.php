@@ -27,6 +27,14 @@ class Notification extends Model
             ->withTimestamps();
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(
+            Attachment::class,
+            'requirement_id',
+        );
+    }
+
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

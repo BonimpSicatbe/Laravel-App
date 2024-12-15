@@ -25,16 +25,6 @@ TODO:
     {{--requirement details--}}
     <x-container-section>
         @include('admin.requirements.partials.requirement-details')
-        {{--
-            <div class="">
-                <x-input-label class="capitalize">attachment lists</x-input-label>
-                <div class="max-h-[250px] overflow-y-auto">
-                    @for($i = 0; $i < 7; $i++)
-                        <div class="rounded-lg p-2 transition-all hover:shadow-lg">Lorem ipsum dolor.</div>
-                    @endfor
-                </div>
-            </div>
-        --}}
     </x-container-section>
 
     {{--task list--}}

@@ -29,9 +29,14 @@ class Task extends Model
         'updated_at' => 'datetime',
     ];
 
-    public function user(): BelongsTo
+    public function user()
     {
-        return $this->belongsToMany(User::class, 'tasks_users', 'task_id', 'user_id');
+        return $this->belongsToMany(
+            User::class,
+            'tasks_users',
+            'task_id',
+            'user_id'
+        );
     }
 
     public function users() // 17/10/2024 9:32am

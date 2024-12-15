@@ -51,11 +51,6 @@ class Requirement extends Model
         );
     }
 
-    public function requirements()
-    {
-        return $this->belongsToMany(Requirement::class, 'requirement_users');
-    }
-
     public function tasks()
     {
         return $this->hasMany(Task::class);
@@ -76,6 +71,11 @@ class Requirement extends Model
         return $this->belongsTo(Position::class, 'sent_to_id');
     }
 
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
+    }
+
     // =========================
     public function createdBy()
     {
@@ -86,6 +86,7 @@ class Requirement extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
 
     public function getSentToNameAttribute()
     {

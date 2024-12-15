@@ -31,23 +31,6 @@ class UploadController extends Controller
 
             return ['folder' => $folder];
         }
-        elseif ($request->hasFile('uploadSyllabus')) {
-            $files = $request->file('uploadSyllabus');
-            $folder = uniqid() . '_' . now()->timestamp;
-
-            foreach ($files as $file) {
-                $filename = $file->getClientOriginalName();
-                $path = $file->storeAs("uploads/tmp/{$folder}", $filename);
-
-                TemporaryFile::create([
-                    'folder' => $folder,
-                    'filename' => $filename,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
-            return ['folder' => $folder];
-        }
 
         return response()->json(['error' => 'Attachments not uploaded'], 400);
     }

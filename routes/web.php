@@ -44,7 +44,8 @@ Route::post('/tmp/upload', [UploadController::class, 'upload'])->name('tmp_uploa
 Route::delete('/tmp/revert', [UploadController::class, 'revert'])->name('tmp_revert');
 Route::get('/tmp/restore', [UploadController::class, 'restore'])->name('tmp_restore');
 Route::get('/tmp/load', [UploadController::class, 'load'])->name('tmp_load');
-Route::get('/attachments/{attachment}/show', [AttachmentController::class, 'show'])->name('attachments.show');
+
+Route::get('/attachments/{attachment}/view', [AttachmentController::class, 'show'])->name('attachments.view');
 Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
 Route::get('/attachments/{attachment}/download', [AttachmentController::class, 'downloadAttachment'])->name('attachments.download');
 

@@ -52,4 +52,25 @@
         <x-input-label class="capitalize">description</x-input-label>
         <div class="text-md capitalize">{{ $requirement->description }}</div>
     </div>
+
+    <div class="col-span-2 space-y-2">
+        <x-input-label class="capitalize">attachments</x-input-label>
+        @if(is_null($requirement->attachments))
+            <div class="text-md">No attachment uploaded.</div>
+        @else
+            <div class="space-y-2">
+                @foreach($requirement->attachments as $attachment)
+                    <div class="flex flex-row gap-4">
+                        <div class="text-md grow">{{ $attachment->file_name }}</div>
+
+                        <div class="space-x-2">
+                            <a href="{{ route('attachments.view', $requirement->id) }}" class="text-green-500 hover:text-green-700 transition-all tooltip tooltip-left" data-tip="view"><i class="fa-regular fa-eye"></i></a>
+                            <a href="{{ route('attachments.download', $requirement->id) }}" class="text-blue-500 hover:text-blue-700 transition-all tooltip tooltip-left" data-tip="download"><i class="fa-regular fa-download"></i></a>
+                            <a href="" class="text-orange-500 hover:text-green-700 transition-all tooltip tooltip-left" data-tip="upload"><i class="fa-regular fa-upload"></i></a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
 </div>

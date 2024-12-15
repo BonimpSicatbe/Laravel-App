@@ -90,6 +90,7 @@
         <button type="submit" class="btn btn-sm btn-success text-white">Create</button>
     </div>
 </form>
+
 <script>
     function showSelectGroup() {
         const selectGroup = document.getElementById('select_group').value;
