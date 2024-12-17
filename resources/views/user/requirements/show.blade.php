@@ -26,12 +26,7 @@ TODO:
     <x-container-section>
         @include('user.requirements.partials.requirement-details')
     </x-container-section>
-
-    {{--syllabus--}}
-    <x-container-section>
-        <div class="text-lg font-bold">Syllabus</div>
-    </x-container-section>
-
+    
     {{--attachments--}}
     <x-container-section>
         <div class="text-lg font-bold">Attachments</div>

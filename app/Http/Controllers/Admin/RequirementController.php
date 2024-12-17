@@ -40,6 +40,7 @@ class RequirementController extends Controller
         $subjects = Subject::all();
         $positions = Position::all();
 
+
         return view('admin.requirements.index', compact(
             'requirements',
             'courses',
@@ -79,7 +80,7 @@ class RequirementController extends Controller
             'due_date' => 'required|date',
             'select_group' => 'required|string',  // Either 'course', 'subject', 'position', or 'all'
             'select_target_group' => 'nullable',
-            'uploadSyllabus' => 'nullable',
+            'attachments' => 'nullable',
         ]);
 
         // Step 1: Determine 'sent_to_type' and 'sent_to_id'
@@ -167,7 +168,8 @@ class RequirementController extends Controller
             ]);
         }
 
-        $uploadedSyllabus = $validatedData['uploadSyllabus'];
+        //
+        $uploadedSyllabus = $validatedData['attachments'];
         if ($uploadedSyllabus) {
             $file_path = "uploads/requirements/syllabus/{$requirement->id}";
 
@@ -294,10 +296,8 @@ class RequirementController extends Controller
      */
     public function destroy(Requirement $requirement)
     {
-        // Delete associated tasks first
-        $requirement->tasks()->delete();
-
         // Then delete the requirement
+        $requirement->notifications()->delete();
         $requirement->delete();
 
         return redirect()->route('admin.requirements.index')->with('success', 'Requirement and associated tasks deleted successfully.');
@@ -334,14 +334,6 @@ class RequirementController extends Controller
         return view('admin.requirements.tasks', compact(
             'tasks',
         ));
-    }
-
-    public function deleteRequirementTask($task)
-    {
-        $task->files()->delete();
-        $task->delete();
-
-        return redirect()->back()->with('success', 'Task deleted successfully');
     }
 
     public function getGroupData(Request $request)

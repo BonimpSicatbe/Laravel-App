@@ -34,6 +34,23 @@
             @include('admin.requirements.partials.requirement-create-form')
         </div>
     </dialog>
-
-
 </x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputElement = document.querySelector('input[type="file"]');
+        const pond = FilePond.create(inputElement);
+
+        pond.getFiles();
+
+        FilePond.setOptions({
+            server: {
+                process: '{{ route('tmp_upload') }}',
+                revert: '{{ route('tmp_revert') }}',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+            },
+        });
+    });
+</script>

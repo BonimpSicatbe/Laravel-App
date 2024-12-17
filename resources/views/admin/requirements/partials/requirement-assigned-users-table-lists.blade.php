@@ -29,17 +29,17 @@
                     {{--                <td class="text-nowrap truncate">{{ $user->updated_at }}</td>--}}
                     <td class="flex flex-row gap-2">
                         <a href="{{ route('admin.users.show', $user->id) }}"
-                           class="text-green-500 hover:text-green-700 transition-all"><i
+                           class="text-green-500 hover:text-green-700 transition-all tooltip tooltip-left" data-tip="view"><i
                                 class="fa-regular fa-eye"></i></a>
                         <a href="{{ route('admin.users.edit', $user->id) }}"
-                           class="text-blue-500 hover:text-blue-700 transition-all"><i
+                           class="text-blue-500 hover:text-blue-700 transition-all tooltip tooltip-left" data-tip="edit"><i
                                 class="fa-regular fa-edit"></i></a>
 
                         <form action="{{ route('admin.requirements.user.delete', ['requirement' => $requirement->id, 'user' => $user->id]) }}" method="post">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700 transition-all"><i
-                                    class="fa-regular fa-trash"></i></button>
+                            <button type="submit" class="text-red-500 hover:text-red-700 transition-all tooltip tooltip-left" data-tip="remove user"><i
+                                    class="fa-regular fa-user-xmark"></i></button>
                         </form>
                     </td>
                 </tr>

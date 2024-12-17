@@ -62,6 +62,7 @@
     </main>
 </div>
 
+<script src="{{ asset('filepond-master/dist/filepond.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const successMessage = document.getElementById('success-message');
@@ -96,27 +97,10 @@
         {{--        headers: {--}}
         {{--            'X-CSRF-TOKEN': '{{ csrf_token() }}'--}}
         {{--        },--}}
-        {{--        maxFiles: 1,--}}
         {{--    },--}}
         {{--});--}}
-
-        const inputs = document.querySelectorAll('input[type="file"]');
-        inputs.forEach(input => {
-            FilePond.create(input, {
-                server: {
-                    process: '{{ route('tmp_upload') }}',
-                    revert: '{{ route('tmp_revert') }}',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                },
-                allowMultiple: true,
-            });
-        });
     });
 </script>
-@yield('scripts')
-<script src="{{ asset('filepond-master/dist/filepond.js') }}"></script>
 
 </body>
 </html>
