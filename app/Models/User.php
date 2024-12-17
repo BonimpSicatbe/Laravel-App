@@ -49,6 +49,7 @@ class User extends Authenticatable
         );
     }
 
+
     public function tasks()
     {
         return $this->hasManyThrough(
@@ -102,6 +103,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Notification::class, 'user_has_notifications')
             ->withPivot('read_at') // Include the 'read_at' column from the pivot table
             ->withTimestamps();
+    }
+
+    public function submittedAttachmentFiles()
+    {
+        return $this->hasMany(UserSubmittedFile::class);
     }
 
     // ====================

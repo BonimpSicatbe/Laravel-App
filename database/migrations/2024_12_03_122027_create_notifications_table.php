@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('notification_description');
             $table->string('title');
             $table->string('message');
-            $table->foreignId('requirement_id')->constrained();
+            $table->foreignId('requirement_id')->constrained()->ondelete('cascade');
             $table->string('sent_to');
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');

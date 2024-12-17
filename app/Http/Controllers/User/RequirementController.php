@@ -47,13 +47,18 @@ class RequirementController extends Controller
      */
     public function show(Requirement $requirement)
     {
+        $user = Auth::user();
+
         $tasks = Task::with(['requirement', 'createdBy'])
             ->where('requirement_id', $requirement->id)
             ->get();
 
+        $requirementSubmittedFile = $user->requirementSubmittedFile;
+
         return view('user.requirements.show', compact(
             'requirement',
             'tasks',
+            'user',
         ));
     }
 

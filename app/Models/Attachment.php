@@ -42,5 +42,10 @@ class Attachment extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function userSubmitteedFile()
+    {
+        return $this->belongsTo(UserSubmittedFile::class);
+    }
 }
 

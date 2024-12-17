@@ -81,8 +81,8 @@
 
     {{--upload syllabus--}}
     <div class="">
-        <x-input-label for="select_target_group" :value="__('Upload Syllabus:')"/>
-        <input type="file" name="uploadSyllabus[]" id="uploadSyllabus" multiple>
+        <x-input-label for="attachments" :value="__('Attachments:')"/>
+        <input type="file" name="attachments[]" id="attachments" multiple>
     </div>
 
     <div class="flex justify-end items-center gap-2">

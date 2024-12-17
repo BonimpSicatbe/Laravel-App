@@ -76,6 +76,15 @@ class Requirement extends Model
         return $this->hasMany(Attachment::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasmany(Notification::class, 'requirement_id');
+    }
+
+    public function userSubmittedFiles()
+    {
+        return $this->hasMany(UserSubmittedFile::class, 'requirement_id');
+    }
     // =========================
     public function createdBy()
     {
