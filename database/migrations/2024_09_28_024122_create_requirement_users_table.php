@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('requirement_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('requirement_id')->constrained('requirements');
+            // Add cascading delete for the foreign key
+            $table->foreignId('requirement_id')->constrained('requirements')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
         });
