@@ -1,5 +1,5 @@
 <div class="overflow-y-auto max-h-[250px]">
-    <table class="table table-auto">
+    <table class="table table-auto table-pin-rows">
         <thead>
         <tr class="text-gray-400">
             <th>Account Number</th>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Requirement;
 use App\Models\RequirementUser;
 use App\Models\Task;
+use App\Models\TemporaryFile;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,7 @@ class RequirementController extends Controller
      */
     public function create()
     {
-        //
+        return view('user.requirements.create');
     }
 
     /**
@@ -39,7 +40,28 @@ class RequirementController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+
+        $validated = $request->validate([
+            'userFileUpload' => 'nullable',
+        ]);
+
+        $uploadedFile = $validated['userFileUpload'];
+        if($uploadedFile) {
+            $file_path = "uploads/requirements/userSubmittedRequirementFiles/{$request->requirement->id}/";
+            $files = collect();
+
+            foreach ($uploadedFile as $file) {
+                $decodedFile = json_decode($file, true);
+
+                if (isset($decodedFile['folder'])) {
+                    $folder = $decodedFile['folder'];
+
+                }
+            }
+        }
+
+        return redirect()->route('requirements.show', $request->requirement);
     }
 
     /**
@@ -52,8 +74,6 @@ class RequirementController extends Controller
         $tasks = Task::with(['requirement', 'createdBy'])
             ->where('requirement_id', $requirement->id)
             ->get();
-
-        $requirementSubmittedFile = $user->requirementSubmittedFile;
 
         return view('user.requirements.show', compact(
             'requirement',
@@ -85,4 +105,6 @@ class RequirementController extends Controller
     {
         //
     }
+
+    // ===== ===== ===== =====
 }

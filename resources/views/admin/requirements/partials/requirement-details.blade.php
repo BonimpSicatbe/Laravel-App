@@ -53,27 +53,9 @@
         <div class="text-md capitalize">{{ $requirement->description }}</div>
     </div>
 
-    <div class="col-span-2 space-y-2">
+    {{--attachments--}}
+    <div class="col-span-2">
         <x-input-label class="capitalize">attachments</x-input-label>
-        @if(is_null($requirement->attachments))
-            <div class="text-md">No attachment uploaded.</div>
-        @else
-            <div class="overflow-y-auto max-h-[250px]z space-y-2">
-                @foreach($requirement->attachments as $attachment)
-                    <div class="flex flex-row gap-4">
-                        <div class="text-md grow">{{ $attachment->file_name }}</div>
-
-                        <div class="flex flex-row gap-2">
-                            <a href="{{ route('attachments.view', $attachment->id) }}" class="text-green-500 hover:text-green-700 transition-all tooltip tooltip-left" data-tip="view"><i class="fa-regular fa-eye"></i></a>
-                            <a href="{{ route('attachments.download', $attachment->id) }}" class="text-blue-500 hover:text-blue-700 transition-all tooltip tooltip-left" data-tip="download"><i class="fa-regular fa-download"></i></a>
-                            <form action="{{ route('attachments.destroy', $attachment->id) }}" method="post">
-                                @csrf
-                                <button type="submit" class="text-red-500 hover:text-red-700 transition-all"><i class="fa-regular fa-trash"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        @endif
+        @include('admin.requirements.partials.requirement-attachments-list')
     </div>
 </div>

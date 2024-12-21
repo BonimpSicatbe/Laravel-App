@@ -11,7 +11,7 @@ TODO:
         View Requirement
     </x-app-header>
 
-    {{--for error checking todo to be removed--}}
+    {{-- for error checking todo to be removed --}}
     @if ($errors->any())
         <x-container-section>
             <ul>
@@ -22,24 +22,50 @@ TODO:
         </x-container-section>
     @endif
 
-    {{--requirement details--}}
+    {{-- requirement details --}}
     <x-container-section>
         @include('user.requirements.partials.requirement-details')
     </x-container-section>
-    
-    {{--attachments--}}
+
+    {{-- files uploaded --}}
     <x-container-section>
-        <div class="text-lg font-bold">Attachments</div>
-        <div class="overflow-y-auto max-h-[250px]">
-            @include('user.requirements.partials.requirement-attachments-list')
+        <div class="flex flex-row items-center justify-between gap-4">
+            <div class="text-lg font-bold">Files Uploaded</div>
+            <a href="{{ route('user.requirements.create', $requirement->id) }}" class="btn btn-sm btn-success text-white">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload File</span>
+            </a>
+
+            {{-- <input type="file" name="userRequirementFileUpload[]" id="userRequirementFileUpload" class="hidden" multiple>
+            <label for="userRequirementFileUpload" class="btn btn-sm btn-success text-white">
+                <i class="fa-regular fa-upload"></i>
+                <span>Upload File</span>
+            </label> --}}
+
+            {{-- <button onclick="userFileUploadModal.showModal()" class="btn btn-success btn-sm text-white">
+                <i class="fa-solid fa-upload"></i>
+                <span>Upload File</span>
+            </button> --}}
         </div>
+        @include('user.requirements.partials.requirement-files-uploaded')
     </x-container-section>
 
-    {{--files uploaded--}}
-    <x-container-section>
-        <div class="text-lg font-bold">Files Uploaded</div>
-        <div class="overflow-y-auto max-h-[250px]">
-            @include('user.requirements.partials.requirement-files-uploaded')
+    {{-- <dialog id="userFileUploadModal" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl space-y-4">
+            <h3 class="text-lg font-bold">Upload Requirement Files</h3>
+
+            @include('user.requirements.partials.requirement-attachments-list')
+
+            <div class="text-right">
+                <form action="{{ route('user.requirements.store') }}" method="post" class="">
+                    @csrf
+                    <input type="file" name="userFileUpload[]" id="userFileUpload" class="" multiple>
+                    <div class="">
+                        <button type="button" class="btn btn-sm" onclick="userFileUploadModal.close()">Close</button>
+                        <button type="submit" class="btn btn-sm btn-success text-white">Upload File</button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </x-container-section>
+    </dialog> --}}
 </x-app-layout>
