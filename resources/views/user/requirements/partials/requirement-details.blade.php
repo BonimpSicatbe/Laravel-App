@@ -54,9 +54,14 @@
     </div>
 
     {{--syllabus--}}
-    <div class="">
+    <div class="col-span-2">
         <x-input-label class="capitalize">syllabus</x-input-label>
         <div class="text-md capitalize">{{ is_null($requirement->syllabus) ? 'No syllabus uploaded.' : $requirement->syllabus }}</div>
-{{--        @include('user.requirements.partials.requirement-syllabus-lists')--}}
+    </div>
+
+    {{--attachments--}}
+    <div class="col-span-2">
+        <x-input-label class="capitalize">attachment</x-input-label>
+        @include('user.requirements.partials.requirement-attachments-list')
     </div>
 </div>

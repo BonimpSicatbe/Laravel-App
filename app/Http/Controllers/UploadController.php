@@ -32,6 +32,27 @@ class UploadController extends Controller
             return ['folder' => $folder];
         }
 
+        if ($request->hasFile('userFileUpload')) {
+            $userFileUpload = $request->userFileUpload;
+            $folder = uniqid() . '_' . now()->timestamp;
+
+            foreach ($userFileUpload as $fileUpload) {
+                $filename = $fileUpload->getClientOriginalName();
+                $path = $fileUpload->storeAs("uploads/tmp/{$folder}", $filename);
+
+                TemporaryFile::create([
+                    'folder' => $folder,
+                    'filename' => $filename,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
+            \Log::info('Attachments stored in the local folder.');
+
+            return ['folder' => $folder];
+        }
+
         return response()->json(['error' => 'Attachments not uploaded'], 400);
     }
 

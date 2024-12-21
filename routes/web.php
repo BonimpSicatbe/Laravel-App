@@ -100,6 +100,9 @@ Route::group(['middleware' => ['auth']], function () {
         // ===== FILEPOND =====
         Route::post('/file_upload', [UploadController::class, 'upload'])->name('file.upload');
         Route::delete('/file_revert', [UploadController::class, 'revert'])->name('file.revert');
+
+        // ===== ATTACHMENTS =====
+        Route::delete('/attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
     });
 
     // ===== USER =====
@@ -124,7 +127,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('notifications', User_NotificationController::class);
 
         // ===== REQUIREMENTS =====
-        Route::delete('/requirements/{requirement}/user/{user}', [User_RequirementController::class, 'deleteAssignedUser'])->name('requirements.user.delete');
+        Route::post('user/requirements/', [User_RequirementController::class, 'upload'])->name('requirements.upload');
         Route::resource('requirements', User_RequirementController::class);
 
         // ===== TASKS =====
