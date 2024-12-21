@@ -23,22 +23,46 @@ class UserController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        $users = User::with(['position', 'requirements', 'tasks', 'roles', 'permissions'])->get();
+{
+    // Step 1: Retrieve filter inputs
+    $role = $request->input('role', 'all');
+    $searchName = $request->input('searchName');
+    $searchEmail = $request->input('searchEmail');
 
-        $courses = Course::all();
-        $subjects = Subject::all();
-        $positions = Position::all();
+    // Step 2: Start building the query
+    $query = User::with(['roles', 'requirements', 'tasks', 'position']);
 
-
-//        dd($users);
-        return view('admin.users.index', compact(
-            'users',
-            'courses',
-            'subjects',
-            'positions',
-        ));
+    // Step 3: Apply role filtering
+    if ($role !== 'all') {
+        $query->whereHas('roles', function ($q) use ($role) {
+            $q->where('name', $role);
+        });
     }
+
+    // Step 4: Apply name search
+    if (!empty($searchName)) {
+        $query->where('name', 'like', '%' . $searchName . '%');
+    }
+
+    // Step 5: Apply email search
+    if (!empty($searchEmail)) {
+        $query->where('email', 'like', '%' . $searchEmail . '%');
+    }
+
+    // Step 6: Paginate the results
+    $users = $query->paginate(10)->appends($request->query());
+
+    // Step 7: Retrieve additional data for filters
+    $courses = Course::all();
+    $subjects = Subject::all();
+    $positions = Position::all();
+
+    // Step 8: Debug (optional)
+    // Uncomment this to inspect data:
+    // dd($users->toArray());
+
+    return view('admin.users.index', compact('users', 'courses', 'subjects', 'positions'));
+}
 
     /**
      * Show the form for creating a new resource.
