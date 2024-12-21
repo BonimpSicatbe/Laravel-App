@@ -4,17 +4,15 @@
         <th>Name</th>
         <th>Description</th>
         <th>Status</th>
-        {{--        <th>Created By</th>--}}
         <th>Tasks</th>
         <th>Users</th>
-        {{--        <th>Sent To</th>--}}
         <th>Created At</th>
         <th>Due Date</th>
         <th>Actions</th>
     </tr>
     </thead>
     <tbody id="requirements-tbody">
-    @if($requirements->isempty())
+    @if($requirements->isEmpty())
         <tr>
             <td colspan="8" class="text-center font-bold text-black">No Requirements Listed.</td>
         </tr>
@@ -31,43 +29,65 @@
                 {{-- status --}}
                 <td class="truncate"><a href="">{{ $requirement->status }}</a></td>
 
-                {{-- created by --}}
-                {{--                <td class="truncate">{{ $requirement->createdBy->name }}</td>--}}
-
                 <td class="truncate">{{ $requirement->tasks->count() }}</td>
                 <td class="truncate">{{ $requirement->users->count() }}</td>
-
-                {{--Sent To--}}
-                {{--<td></td>--}}
-                {{--<td class="truncate">{{ $requirement->sentTo() }}</td>--}}
 
                 {{--Created At--}}
                 <td class="truncate">{{ $requirement->created_at }}</td>
 
                 {{-- due date --}}
-                <td class="truncate">{{  $requirement->due_date }}</td>
+                <td class="truncate">{{ $requirement->due_date }}</td>
 
                 {{-- action buttons --}}
                 <td class="flex flex-row items-center gap-2">
                     {{-- view requirement --}}
                     <a href="{{ route('admin.requirements.show', $requirement->id) }}"
-                       class="text-green-500 hover:text-green-700 transition-all "><i
-                            class=" fa-regular fa-eye"></i></a>
+                       class="text-green-500 hover:text-green-700 transition-all "><i class="fa-regular fa-eye"></i></a>
 
                     {{-- edit requirement --}}
                     <a href="{{ route('admin.requirements.edit', $requirement->id) }}"
-                       class="text-blue-500 hover:text-blue-700 transition-all "><i class=" fa-regular fa-edit"></i></a>
+                       class="text-blue-500 hover:text-blue-700 transition-all "><i class="fa-regular fa-edit"></i></a>
 
                     {{-- delete requirement --}}
-                    <form method="POST" action="{{ route('admin.requirements.destroy', $requirement->id) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-500 hover:text-red-700 transition-all "><i
-                                class=" fa-regular fa-trash"></i></button>
-                    </form>
+                    <button type="button" class="text-red-500 hover:text-red-700 transition-all" onclick="showDeleteModal({{ $requirement->id }})">
+                        <i class="fa-regular fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         @endforeach
     @endif
     </tbody>
 </table>
+
+<!-- Confirmation Deletion Modal -->
+<dialog id="delete_requirement_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-lg space-y-2">
+        <h3 class="text-lg font-bold">Confirm Deletion</h3>
+        <p>Are you sure you want to delete this requirement? This action cannot be undone.</p>
+        <div class="modal-action">
+            <form id="delete_form" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            </form>
+            <button class="btn" onclick="closeDeleteModal()">Cancel</button>
+        </div>
+    </div>
+</dialog>
+
+<script>
+    // Function to open the delete confirmation modal
+    function showDeleteModal(requirementId) {
+        // Set the action URL for the delete form dynamically
+        const form = document.getElementById('delete_form');
+        form.action = '/admin/requirements/' + requirementId;
+
+        // Open the modal
+        document.getElementById('delete_requirement_modal').showModal();
+    }
+
+    // Function to close the delete confirmation modal
+    function closeDeleteModal() {
+        document.getElementById('delete_requirement_modal').close();
+    }
+</script>

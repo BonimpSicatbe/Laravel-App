@@ -296,12 +296,27 @@ class RequirementController extends Controller
      */
     public function destroy(Requirement $requirement)
     {
-        // Then delete the requirement
-        $requirement->notifications()->delete();
-        $requirement->delete();
+        DB::beginTransaction();
+        
+        try {
+            // Check if any dependencies exist (like related tasks, users, etc.)
+            $requirement->notifications()->delete();  // Deleting notifications linked to the requirement
+            $requirement->users()->detach();  // Detach users linked to the requirement
+            
+            // Delete the requirement itself
+            $requirement->delete();
+            
+            // Commit transaction if everything is successful
+            DB::commit();
 
-        return redirect()->route('admin.requirements.index')->with('success', 'Requirement and associated tasks deleted successfully.');
+            return redirect()->route('admin.requirements.index')->with('success', 'Requirement and associated tasks deleted successfully.');
+        } catch (Exception $e) {
+            // Rollback in case of any errors
+            DB::rollBack();
+            return redirect()->route('admin.requirements.index')->with('error', 'Failed to delete requirement.');
+        }
     }
+
 
     /*
      *
