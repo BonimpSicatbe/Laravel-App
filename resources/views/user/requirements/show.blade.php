@@ -31,21 +31,23 @@ TODO:
     <x-container-section>
         <div class="flex flex-row items-center justify-between gap-4">
             <div class="text-lg font-bold">Files Uploaded</div>
-            <a href="{{ route('user.requirements.create', $requirement->id) }}" class="btn btn-sm btn-success text-white">
+            <a href="{{ route('user.requirements.create', ['requirement_id' => $requirement]) }}" class="btn btn-sm btn-success text-white">
                 <i class="fa-solid fa-upload"></i>
                 <span>Upload File</span>
             </a>
 
-            {{-- <input type="file" name="userRequirementFileUpload[]" id="userRequirementFileUpload" class="hidden" multiple>
-            <label for="userRequirementFileUpload" class="btn btn-sm btn-success text-white">
-                <i class="fa-regular fa-upload"></i>
-                <span>Upload File</span>
-            </label> --}}
+            {{-- <div class="">
+                <input type="file" name="userRequirementFileUpload[]" id="userRequirementFileUpload" class="hidden" multiple>
+                <label for="userRequirementFileUpload" class="btn btn-sm btn-success text-white">
+                    <i class="fa-regular fa-upload"></i>
+                    <span>Upload File</span>
+                </label>
 
-            {{-- <button onclick="userFileUploadModal.showModal()" class="btn btn-success btn-sm text-white">
-                <i class="fa-solid fa-upload"></i>
-                <span>Upload File</span>
-            </button> --}}
+                <button onclick="userFileUploadModal.showModal()" class="btn btn-success btn-sm text-white">
+                    <i class="fa-solid fa-upload"></i>
+                    <span>Upload File</span>
+                </button>
+            </div> --}}
         </div>
         @include('user.requirements.partials.requirement-files-uploaded')
     </x-container-section>

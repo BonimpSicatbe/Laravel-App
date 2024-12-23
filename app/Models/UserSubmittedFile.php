@@ -10,9 +10,11 @@ class UserSubmittedFile extends Model
     use HasFactory;
 
     protected $fillable = [
+        'file_name',
+        'size',
+        'type',
+        'file_path',
         'user_id',
-        'file_id',
-        'attachment_id',
         'requirement_id',
     ];
 
