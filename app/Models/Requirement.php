@@ -78,13 +78,22 @@ class Requirement extends Model
 
     public function notifications()
     {
-        return $this->hasmany(Notification::class, 'requirement_id');
+        return $this->hasMany(Notification::class, 'requirement_id');
     }
 
     public function userSubmittedFiles()
     {
         return $this->hasMany(UserSubmittedFile::class, 'requirement_id');
     }
+
+    // New relation for users who have submitted the requirement
+    public function submittedUsers()
+    {
+        // Assuming there's a pivot table or a specific way to track submissions, adjust as necessary
+        return $this->belongsToMany(User::class, 'requirement_user_submissions')  // Replace 'requirement_user_submissions' with the correct pivot table
+            ->withTimestamps();  // Use this if you're tracking submission times
+    }
+
     // =========================
     public function createdBy()
     {
@@ -96,7 +105,6 @@ class Requirement extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
-
     public function getSentToNameAttribute()
     {
         return match ($this->sent_to_type) {
@@ -107,7 +115,6 @@ class Requirement extends Model
             default => 'Not assigned',
         };
     }
-
 
     // ===== USER =====
 }

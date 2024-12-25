@@ -36,7 +36,7 @@ class RequirementController extends Controller
         $user = Auth::user();
 
         // Query Requirements with relationships
-        $query = Requirement::with(['tasks', 'users']);
+        $query = Requirement::with(['tasks', 'users', 'submittedUsers']); // Added 'submittedUsers' here
 
         // Filter by status if provided
         if ($request->has('sortStatus') && $request->sortStatus !== 'all') {
