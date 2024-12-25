@@ -4,7 +4,6 @@
         <th>Name</th>
         <th>Description</th>
         <th>Status</th>
-        <th>Tasks</th>
         <th>Users</th>
         <th>Created At</th>
         <th>Due Date</th>
@@ -14,7 +13,7 @@
     <tbody id="requirements-tbody">
     @if($requirements->isEmpty())
         <tr>
-            <td colspan="8" class="text-center font-bold text-black">No Requirements Listed.</td>
+            <td colspan="7" class="text-center font-bold text-black">No Requirements Listed.</td>
         </tr>
     @else
         @foreach ($requirements as $requirement)
@@ -29,7 +28,6 @@
                 {{-- status --}}
                 <td class="truncate"><a href="">{{ $requirement->status }}</a></td>
 
-                <td class="truncate">{{ $requirement->tasks->count() }}</td>
                 <td class="truncate">{{ $requirement->users->count() }}</td>
 
                 {{--Created At--}}
