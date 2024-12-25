@@ -1,33 +1,41 @@
 <x-app-layout>
-    {{--    @section('head')--}}
     <link rel="stylesheet" href="{{ asset('css/requirements/index.css') }}">
-    {{--    @endsection--}}
 
     <x-app-header>Requirement List</x-app-header>
     <x-container-section>
-        {{-- sort section --}}
-        <div class="flex flex-row items-center gap-2">
-            {{--sort status--}}
-            <select name="sortStatus" id="sortStatus" class="select select-bordered">
-                <option value="all" selected>All Records</option>
-                <option value="pending">Pending</option>
-                <option value="in_progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </select>
-            {{--<x-select-input class="focus:border-green-500 w-fit" select-label="Select Status"></x-select-input>--}}
+        {{-- Sort and Search Section --}}
+        <div class="flex flex-row items-center gap-2 justify-between">
+            {{-- Sort and Search Form --}}
+            <form method="GET" action="{{ route('admin.requirements.index') }}" class="flex flex-row items-center gap-2">
+                {{-- Sort Status --}}
+                <select name="sortStatus" id="sortStatus" class="select select-bordered">
+                    <option value="all" {{ request('sortStatus') == 'all' ? 'selected' : '' }}>All Records</option>
+                    <option value="pending" {{ request('sortStatus') == 'pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="in_progress" {{ request('sortStatus') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                    <option value="completed" {{ request('sortStatus') == 'completed' ? 'selected' : '' }}>Completed</option>
+                </select>
 
-            {{--search bar--}}
-            <x-text-input class="" placeholder="Search..."/>
+                {{-- Search Bar --}}
+                <x-text-input name="search" value="{{ request('search') }}" placeholder="Search..."/>
 
-            {{--add new file--}}
-            {{--            <a href="{{ route('admin.requirements.create') }}" class="btn btn-md btn-success text-white">Create <i class="fa-solid fa-plus"></i></a>--}}
-            <button class="btn btn-md btn-success text-white" onclick="create_requirement.showModal()">Create <i class="fa-solid fa-plus"></i></button>
+                {{-- Search Button --}}
+                <button type="submit" class="btn btn-primary">Search</button>
+
+                {{--show all button--}}
+                <a href="{{ route('admin.requirements.index') }}" class="btn btn-secondary">Show All</a>
+            </form>
+
+            {{-- Add New Requirement Button --}}
+            <button class="btn btn-md btn-success text-white" onclick="create_requirement.showModal()">
+                Create <i class="fa-solid fa-plus"></i>
+            </button>
         </div>
 
-        {{-- requirements table --}}
+        {{-- Requirements Table --}}
         @include('admin.requirements.partials.requirement-table-lists')
     </x-container-section>
 
+    {{-- Create Requirement Modal --}}
     <dialog id="create_requirement" class="modal">
         <div class="modal-box w-11/12 max-w-5xl space-y-2">
             <h3 class="text-lg font-bold">Create Requirement</h3>
@@ -39,18 +47,20 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const inputElement = document.querySelector('input[type="file"]');
-        const pond = FilePond.create(inputElement);
+        if (inputElement) {
+            const pond = FilePond.create(inputElement);
 
-        pond.getFiles();
+            pond.getFiles();
 
-        FilePond.setOptions({
-            server: {
-                process: '{{ route('tmp_upload') }}',
-                revert: '{{ route('tmp_revert') }}',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            FilePond.setOptions({
+                server: {
+                    process: '{{ route('tmp_upload') }}',
+                    revert: '{{ route('tmp_revert') }}',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
                 },
-            },
-        });
+            });
+        }
     });
 </script>
