@@ -41,12 +41,6 @@
         <div class="text-md capitalize">{{ $requirement->status }}</div>
     </div>
 
-    {{--task count--}}
-    <div class="">
-        <x-input-label class="capitalize">task count</x-input-label>
-        <div class="text-md capitalize">{{ $requirement->tasks->count() }}</div>
-    </div>
-
     {{--description--}}
     <div class="col-span-2">
         <x-input-label class="capitalize">description</x-input-label>
@@ -56,6 +50,11 @@
     {{--attachments--}}
     <div class="col-span-2">
         <x-input-label class="capitalize">attachments</x-input-label>
-        @include('admin.requirements.partials.requirement-attachments-list')
+        @if($requirement->attachments && $requirement->attachments->isNotEmpty())
+            @include('admin.requirements.partials.requirement-attachments-list')
+        @else
+            <div class="text-md italic text-gray-500">No Attachment</div>
+        @endif
     </div>
+
 </div>

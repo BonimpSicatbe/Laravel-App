@@ -79,7 +79,7 @@
         <x-input-error :messages="$errors->get('select_target_group')" class="mt-2"/>
     </div>
 
-    {{--upload syllabus--}}
+    {{--upload attachment--}}
     <div class="">
         <x-input-label for="attachments" :value="__('Attachments:')"/>
         <input type="file" name="attachments[]" id="attachments" multiple>

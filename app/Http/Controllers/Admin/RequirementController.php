@@ -35,13 +35,26 @@ class RequirementController extends Controller
     {
         $user = Auth::user();
 
-        $requirements = Requirement::with(['tasks', 'users'])
-            ->get();
+        // Query Requirements with relationships
+        $query = Requirement::with(['tasks', 'users', 'submittedUsers']); // Added 'submittedUsers' here
 
+        // Filter by status if provided
+        if ($request->has('sortStatus') && $request->sortStatus !== 'all') {
+            $query->where('status', $request->sortStatus);
+        }
+
+        // Search by name or other fields if needed
+        if ($request->has('search') && !empty($request->search)) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Get the filtered and paginated results
+        $requirements = $query->paginate(10);
+
+        // Fetch additional data
         $courses = Course::all();
         $subjects = Subject::all();
         $positions = Position::all();
-
 
         return view('admin.requirements.index', compact(
             'requirements',
@@ -50,6 +63,7 @@ class RequirementController extends Controller
             'positions',
         ));
     }
+
 
     /**
      * Show the form for creating a new resource.

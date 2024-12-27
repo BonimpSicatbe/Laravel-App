@@ -1,4 +1,9 @@
 <div class="overflow-y-auto max-h-[250px]">
+    <!-- Display total number of users -->
+    <div class="text-right font-bold text-gray-600 mb-2">
+        Total Users: {{ $requirement->users->count() }}
+    </div>
+    
     <table class="table table-auto table-pin-rows">
         <thead>
         <tr class="text-gray-400">
