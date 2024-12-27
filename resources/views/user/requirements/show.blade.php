@@ -30,36 +30,23 @@ TODO:
     {{-- files uploaded --}}
     <x-container-section>
         <div class="flex flex-row items-center justify-between gap-4">
-            <div class="text-lg font-bold">Files Uploaded</div>
-            <a href="{{ route('user.requirements.create', ['requirement_id' => $requirement]) }}" class="btn btn-sm btn-success text-white">
+            <div class="text-lg font-bold">Files Uploaded <span>({{ $userUploadedFiles->count() }} total)</span></div>
+
+            <button onclick="userFileUploadModal.showModal()" class="btn btn-success btn-sm text-white">
                 <i class="fa-solid fa-upload"></i>
                 <span>Upload File</span>
-            </a>
-
-            {{-- <div class="">
-                <input type="file" name="userRequirementFileUpload[]" id="userRequirementFileUpload" class="hidden" multiple>
-                <label for="userRequirementFileUpload" class="btn btn-sm btn-success text-white">
-                    <i class="fa-regular fa-upload"></i>
-                    <span>Upload File</span>
-                </label>
-
-                <button onclick="userFileUploadModal.showModal()" class="btn btn-success btn-sm text-white">
-                    <i class="fa-solid fa-upload"></i>
-                    <span>Upload File</span>
-                </button>
-            </div> --}}
+            </button>
         </div>
         @include('user.requirements.partials.requirement-files-uploaded')
     </x-container-section>
 
-    {{-- <dialog id="userFileUploadModal" class="modal">
+    <dialog id="userFileUploadModal" class="modal">
         <div class="modal-box w-11/12 max-w-5xl space-y-4">
             <h3 class="text-lg font-bold">Upload Requirement Files</h3>
 
-            @include('user.requirements.partials.requirement-attachments-list')
-
             <div class="text-right">
-                <form action="{{ route('user.requirements.store') }}" method="post" class="">
+                <form action="{{ route('user.requirements.store', ['requirement' => $requirement]) }}" method="post"
+                    class="space-y-4">
                     @csrf
                     <input type="file" name="userFileUpload[]" id="userFileUpload" class="" multiple>
                     <div class="">
@@ -69,5 +56,5 @@ TODO:
                 </form>
             </div>
         </div>
-    </dialog> --}}
+    </dialog>
 </x-app-layout>

@@ -1,0 +1,9 @@
+Requirements:
+    ☐ list the number of required files or file requirements that users must submit
+    ☐ limit the amount of files that a user can upload for every requirements or submission
+    ☐ display the list of files that the user uploaded for each requirements @started(24-12-26 13:27)
+    ☐ fix the users uploaded file view button
+
+Notifications:
+    ☐ make the notification system real-time
+    ☐ send notifications to users when they received a new task or requirement

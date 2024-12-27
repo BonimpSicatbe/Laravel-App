@@ -12,10 +12,12 @@ use App\Models\RequirementUser;
 use App\Models\Task;
 use App\Models\TemporaryFile;
 use App\Models\User;
+use App\Models\UserHasNotification;
 use App\Models\UserSubmittedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Contracts\Role;
 
 class RequirementController extends Controller
 {
@@ -47,7 +49,7 @@ class RequirementController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $requirement_id = request()->requirement_id;
+        $requirement_id = $request->requirement;
 
         $validated = $request->validate([
             'userFileUpload' => 'required',
@@ -60,7 +62,7 @@ class RequirementController extends Controller
         if ($uploadedFile) {
             //
             $file_path = "uploads/requirements/submittedFile/{$requirement_id}";
-
+            $files = collect();
             foreach ($uploadedFile as $submittedFile) {
                 // Decode the JSON string (if applicable)
                 $decodedFile = json_decode($submittedFile, true);
@@ -74,7 +76,6 @@ class RequirementController extends Controller
                     // Retrieve the temporary files from the database
                     $temporaryFile = TemporaryFile::where('folder', $folder)->first();
 
-                    // foreach ($temporaryFile as $tempFile) {
                     // Define the temporary file's path
                     $tempFilePath = storage_path("app/uploads/tmp/{$folder}/{$temporaryFile->filename}");
 
@@ -112,15 +113,27 @@ class RequirementController extends Controller
                 // Optionally: Clean up the folder after processing
                 Storage::deleteDirectory("uploads/tmp/{$folder}");
                 TemporaryFile::where('folder', $folder)->delete();
-                // }
 
+                $files->push($createdAttachment);
             }
 
-            // Debug output for validation
-            \Log::info('Attachments successfully processed:', $files->toArray());
+            // get all admin and super-admin users
+            $users = User::role(['admin', 'super-admin'])->get();
+
+            // notify all admin and super-admin users about the new uploaded file
+            foreach ($users as $user) {
+                $notifyAdmin = UserHasNotification::create([
+                    'user_id' => $user->id,
+                    'notification_id' => $requirement_id,
+                    'read_at' => null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+
         }
 
-        return redirect()->route('user.requirements.show', $requirement_id);
+        return redirect()->route('user.requirements.show', $requirement_id)->with('success', 'Successfully uploaded files');
     }
 
     /**
@@ -130,14 +143,16 @@ class RequirementController extends Controller
     {
         $user = Auth::user();
 
-        $tasks = Task::with(['requirement', 'createdBy'])
-            ->where('requirement_id', $requirement->id)
-            ->get();
+        $userUploadedFiles = UserSubmittedFile::where('requirement_id', $requirement->id)
+        ->where('user_id', $user->id)
+        ->get();
 
+        // dd($userUploadedFiles);
+        // dd($userUploadedFiles);
         return view('user.requirements.show', compact(
             'requirement',
-            'tasks',
             'user',
+            'userUploadedFiles',
         ));
     }
 
