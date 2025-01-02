@@ -1,7 +1,11 @@
+Dashboard:
+    ✔ make the listing of the pendings list horizontal and scrollable without exceeding the width of the page @done(25-01-02 15:13)
+    ✔ display the number of pending tasks and requirements @started(25-01-02 21:29) @done(25-01-02 22:29) @lasted(1h14s)
+
 Requirements:
     ☐ list the number of required files or file requirements that users must submit
     ☐ limit the amount of files that a user can upload for every requirements or submission
-    ☐ display the list of files that the user uploaded for each requirements @started(24-12-26 13:27)
+    ☐ display the list of files that the user uploaded for each requirements
     ☐ fix the users uploaded file view button
 
 Notifications:

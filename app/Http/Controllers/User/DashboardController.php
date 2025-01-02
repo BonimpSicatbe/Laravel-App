@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Requirement;
 use App\Models\Task;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,11 +21,14 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         $notifications = $user->notifications;
-        $tasks = $user->tasks;
+        $requirements = $user->requirements;
+        $pendingTasks = Requirement::with('user')->where('status', 'pending')->get();
+
+        // dd($pendingTasks);
 
         return view('user.dashboard.index', compact([
             'notifications',
-            'tasks',
+            'requirements',
         ]));
     }
 

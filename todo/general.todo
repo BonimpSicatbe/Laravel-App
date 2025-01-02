@@ -1,0 +1,18 @@
+Sidebar:
+    ☐ add expand/collapse button on the top right of the sidebar
+    ☐ expand/collapse sidebar on hover
+    ☐ show nav link icons on collapse
+    ☐ show nav link text on hover
+Alerts:
+    ☐ add alert component
+    ☐ add alert types: success, info, warning, error
+    ☐ add alert position: top, bottom, left, right
+    ☐ add alert duration: auto-hide, manual-hide
+    ☐ add alert action: close, dismiss
+Tables:
+    ☐ make tables scrollable horizontally when the content is too wide
+    ☐ add table pagination
+    ☐ add table search
+    ☐ add table sort
+    ☐ add table filter
+    ☐ add table export

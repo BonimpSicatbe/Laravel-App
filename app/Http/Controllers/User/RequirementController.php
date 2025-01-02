@@ -144,8 +144,8 @@ class RequirementController extends Controller
         $user = Auth::user();
 
         $userUploadedFiles = UserSubmittedFile::where('requirement_id', $requirement->id)
-        ->where('user_id', $user->id)
-        ->get();
+            ->where('user_id', $user->id)
+            ->get();
 
         // dd($userUploadedFiles);
         // dd($userUploadedFiles);
