@@ -15,7 +15,9 @@
                 <div class="p-6 bg-white border-b border-gray-200 w-full space-y-6">
                     <div class="text-lg font-bold">Notifications</div>
                     <div class="overflow-y-auto h-[250px]">
-                        @include('admin.notifications.partials.notification-lists', ['notifications' => $notifications])
+                        @include('admin.notifications.partials.notification-lists', [
+                            'notifications' => $notifications,
+                        ])
                     </div>
                 </div>
             </div>

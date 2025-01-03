@@ -37,7 +37,7 @@
                 <div class="flex flex-col relative w-fit">@include('user.layouts.navigation')</div>
             @endif
 
-            <div class="flex flex-col h-full w-full gap-4 relative bg-gray-100">
+            <div class="flex flex-col h-full w-full gap-4 relative overflow-hidden bg-gray-100">
                 {{--interface section--}}
                 @isset($header)
                     <header class="bg-white shadow">
